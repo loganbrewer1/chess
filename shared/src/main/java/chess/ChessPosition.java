@@ -12,7 +12,10 @@ public class ChessPosition {
 
     private int row;
     private int column;
-
+    public ChessPosition(int row, int col) {
+        this.row = row;
+        this.column = col;
+    }
     public int getRow() {
         return row;
     }
@@ -27,11 +30,6 @@ public class ChessPosition {
 
     public void setColumn(int column) {
         this.column = column;
-    }
-
-    public ChessPosition(int row, int col) {
-        this.row = row;
-        this.column = col;
     }
 
     @Override
