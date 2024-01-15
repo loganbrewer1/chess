@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -51,7 +52,33 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    //TODO: HERE
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        if (type == PieceType.PAWN) {
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col), null));
+            if (row == 2) { //TODO Add logic for piece color
+                validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col), null));
+            }
+        };
+        if (type == PieceType.KNIGHT) { //TODO: Add logic for moving off the board
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col + 1), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row - 2, col + 1), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 2, col - 1), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row - 2, col - 1), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col + 2), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 2), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col + 2), null));
+            validMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col - 2), null));
+        }
+        if (type == PieceType.ROOK) {
+            
+        }
+
+
+        return validMoves;
     }
 }
