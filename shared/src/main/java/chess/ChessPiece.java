@@ -1,5 +1,7 @@
 package chess;
 
+import chess.pieces.BishopMovesCalculator;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -44,7 +46,7 @@ public class ChessPiece {
     public PieceType getPieceType() {
         return type;
     }
-    
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -61,16 +63,18 @@ public class ChessPiece {
         if (type == PieceType.PAWN) {
 
         };
-        if (type == PieceType.KNIGHT) {
+        if (type == PieceType.KNIGHT) { //TODO: Add logic for moving off the board
 
         }
-        if (type == PieceType.ROOK) {
+        if (type == PieceType.ROOK) { //TODO: Figure out logic for when a pieace is in the way
 
         }
+        if (type == PieceType.BISHOP) { //TODO: Figure out logic for when a pieace is in the way
+            BishopMovesCalculator calc = new BishopMovesCalculator();
 
 
-
-
+            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK,PieceType.BISHOP);
+            validMoves.add(piece.pieceMoves());
         return validMoves;
     }
 }
