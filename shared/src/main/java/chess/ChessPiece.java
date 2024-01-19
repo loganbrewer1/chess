@@ -1,6 +1,11 @@
 package chess;
 
 import chess.pieces.BishopMovesCalculator;
+import chess.pieces.RookMovesCalculator;
+import chess.pieces.PawnMovesCalculator;
+import chess.pieces.KnightMovesCalculator;
+import chess.pieces.QueenMovesCalculator;
+import chess.pieces.KingMovesCalculator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,18 +66,28 @@ public class ChessPiece {
         int col = myPosition.getColumn();
 
         if (type == PieceType.PAWN) {
-
+            PawnMovesCalculator pawn = new PawnMovesCalculator();
+            validMoves = pawn.pieceMoves(board, myPosition);
         };
         if (type == PieceType.KNIGHT) { //TODO: Add logic for moving off the board
-
+            KnightMovesCalculator knight = new KnightMovesCalculator();
+            validMoves = knight.pieceMoves(board, myPosition);
         }
         if (type == PieceType.ROOK) { //TODO: Figure out logic for when a pieace is in the way
-
+            RookMovesCalculator rook = new RookMovesCalculator();
+            validMoves = rook.pieceMoves(board, myPosition);
         }
         if (type == PieceType.BISHOP) { //TODO: Figure out logic for when a pieace is in the way
-            BishopMovesCalculator calc = new BishopMovesCalculator();
-//            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK,PieceType.BISHOP);
-//            validMoves.add(piece.pieceMoves());
+            BishopMovesCalculator bishop = new BishopMovesCalculator();
+            validMoves = bishop.pieceMoves(board, myPosition);
+        }
+        if (type == PieceType.QUEEN) { //TODO: Figure out logic for when a pieace is in the way
+            QueenMovesCalculator Queen = new QueenMovesCalculator();
+            validMoves = Queen.pieceMoves(board, myPosition);
+        }
+        if (type == PieceType.KING) { //TODO: Figure out logic for when a pieace is in the way
+            KingMovesCalculator king = new KingMovesCalculator();
+            validMoves = king.pieceMoves(board, myPosition);
         }
         return validMoves;
     }
