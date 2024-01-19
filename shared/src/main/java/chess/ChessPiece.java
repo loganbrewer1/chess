@@ -71,10 +71,9 @@ public class ChessPiece {
         }
         if (type == PieceType.BISHOP) { //TODO: Figure out logic for when a pieace is in the way
             BishopMovesCalculator calc = new BishopMovesCalculator();
-
-
-            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK,PieceType.BISHOP);
-            validMoves.add(piece.pieceMoves());
+//            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK,PieceType.BISHOP);
+//            validMoves.add(piece.pieceMoves());
+        }
         return validMoves;
     }
 }
