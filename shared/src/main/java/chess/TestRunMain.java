@@ -14,16 +14,15 @@ public class TestRunMain {
         ChessBoard chessBoard = new ChessBoard();
         chessBoard.resetBoard();
 
-        chessBoard.addPiece(new ChessPosition(4, 4), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
+        chessBoard.addPiece(new ChessPosition(3, 4), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
         chessBoard.printBoard();
 
-        // Testing KnightMovesCalculator
-        ChessPosition piecePosition = new ChessPosition(4, 4); // Choose a position for the bishop
-        QueenMovesCalculator calc = new QueenMovesCalculator();
-        Collection<ChessMove> bishopMoves = calc.pieceMoves(chessBoard, piecePosition);
+        ChessPosition piecePosition = new ChessPosition(3, 4); // Choose a position for the bishop
+        KingMovesCalculator calc = new KingMovesCalculator();
+        Collection<ChessMove> moveList = calc.pieceMoves(chessBoard, piecePosition);
 
-        System.out.println("Valid moves for the bishop at position " + piecePosition + ":");
-        for (ChessMove move : bishopMoves) {
+        System.out.println("Valid moves for the piece at position " + piecePosition + ":");
+        for (ChessMove move : moveList) {
             System.out.println(move.getEndPosition());
         }
     }
