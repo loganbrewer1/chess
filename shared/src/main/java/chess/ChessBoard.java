@@ -78,11 +78,23 @@ public class ChessBoard {
     }
 
     public void printBoard() {
-        for (int row = 7; row >= 0; row--) {
-            for (int col = 0; col < 8; col++) {
-                ChessPiece piece = board[row][col];
+        for (int i = 7; i >= 0; i--) {
+            for (int j = 0; j <= 7; j++) {
+                ChessPiece piece = board[i][j];
                 if (piece != null) {
-                    char pieceSymbol = getPieceSymbol(piece);
+                    char pieceSymbol = ' ';
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {pieceSymbol = 'K'; }
+                    else if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {pieceSymbol = 'k';}
+                    if (piece.getPieceType() == ChessPiece.PieceType.QUEEN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {pieceSymbol = 'Q'; }
+                    else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {pieceSymbol = 'q';}
+                    if (piece.getPieceType() == ChessPiece.PieceType.BISHOP && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {pieceSymbol = 'B'; }
+                    else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {pieceSymbol = 'b';}
+                    if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {pieceSymbol = 'N'; }
+                    else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {pieceSymbol = 'n';}
+                    if (piece.getPieceType() == ChessPiece.PieceType.ROOK && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {pieceSymbol = 'R'; }
+                    else if (piece.getPieceType() == ChessPiece.PieceType.ROOK && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {pieceSymbol = 'r';}
+                    if (piece.getPieceType() == ChessPiece.PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {pieceSymbol = 'P'; }
+                    else if (piece.getPieceType() == ChessPiece.PieceType.PAWN && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {pieceSymbol = 'p';}
                     System.out.print("|" + pieceSymbol);
                 } else {
                     System.out.print("| ");
@@ -90,25 +102,6 @@ public class ChessBoard {
             }
             System.out.print("|");
             System.out.println();
-        }
-    }
-
-    private char getPieceSymbol(ChessPiece piece) {
-        switch (piece.getPieceType()) {
-            case KING:
-                return (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 'K' : 'k';
-            case QUEEN:
-                return (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 'Q' : 'q';
-            case BISHOP:
-                return (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 'B' : 'b';
-            case KNIGHT:
-                return (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 'N' : 'n';
-            case ROOK:
-                return (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 'R' : 'r';
-            case PAWN:
-                return (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 'P' : 'p';
-            default:
-                return ' ';
         }
     }
 
