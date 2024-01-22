@@ -14,12 +14,13 @@ public class TestRunMain {
         ChessBoard chessBoard = new ChessBoard();
         chessBoard.resetBoard();
 
-        chessBoard.addPiece(new ChessPosition(3, 4), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
+        chessBoard.addPiece(new ChessPosition(6, 4), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+        chessBoard.addPiece(new ChessPosition(4, 4), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
         chessBoard.printBoard();
 
-        ChessPiece myPawn = chessBoard.getPiece(new ChessPosition(3,4));
+        ChessPiece myPawn = chessBoard.getPiece(new ChessPosition(2,4));
 
-        for (ChessMove possibleMove : myPawn.pieceMoves(chessBoard,new ChessPosition(3,4))) {
+        for (ChessMove possibleMove : myPawn.pieceMoves(chessBoard,new ChessPosition(2,4))) {
                 System.out.println(possibleMove.getEndPosition());
         }
     }
