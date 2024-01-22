@@ -7,11 +7,12 @@ import chess.ChessPiece;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class KnightMovesCalculator {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> validMoves = new HashSet<>();
 
         ChessPiece myPiece = board.getPiece(myPosition);
         int row = myPosition.getRow();

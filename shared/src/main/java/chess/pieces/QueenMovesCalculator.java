@@ -7,11 +7,12 @@ import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class QueenMovesCalculator {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> validMoves = new HashSet<>();
 
         ChessPiece myPiece = board.getPiece(myPosition);
         int row = myPosition.getRow();
@@ -137,7 +138,7 @@ public class QueenMovesCalculator {
         }
 
         for (int i = 1; i <= 8; i++) {
-            if (row + i > 0) {
+            if (row + i <= 8) {
                 ChessPosition newPosition = new ChessPosition(row + i, col);
                 ChessPiece targetPiece = board.getPiece(newPosition);
                 if (targetPiece != null && targetPiece.getTeamColor() == myPiece.getTeamColor()) {

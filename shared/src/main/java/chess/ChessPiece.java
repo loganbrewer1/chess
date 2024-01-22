@@ -7,8 +7,8 @@ import chess.pieces.KnightMovesCalculator;
 import chess.pieces.QueenMovesCalculator;
 import chess.pieces.KingMovesCalculator;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -62,7 +62,7 @@ public class ChessPiece {
      */
     //TODO: This whole thing
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> validMoves = new HashSet<>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 

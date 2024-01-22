@@ -4,11 +4,12 @@ import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class PawnMovesCalculator {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> validMoves = new HashSet<>();
 
         ChessPiece myPiece = board.getPiece(myPosition);
         int row = myPosition.getRow();
@@ -31,8 +32,8 @@ public class PawnMovesCalculator {
                 }
             }
             //If there are enemy pieces on a diagonal, those become valid moves.
-            if (board.getPiece(new ChessPosition( row + 1, col + 1)) != null || board.getPiece(new ChessPosition( row + 1, col - 1)) != null) {
-                if (board.getPiece(new ChessPosition( row + 1, col + 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if (board.getPiece(new ChessPosition( row + 1, col + 1)) != null) {
+                if (board.getPiece(new ChessPosition(row + 1, col + 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
                     if (row != 7) {
                         validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col + 1), null));
                     }
@@ -40,6 +41,8 @@ public class PawnMovesCalculator {
                         addAllPromotions(validMoves, myPosition, row + 1, col + 1);
                     }
                 }
+            }
+            if (board.getPiece(new ChessPosition( row + 1, col - 1)) != null) {
                 if (board.getPiece(new ChessPosition( row + 1, col - 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
                     if (row != 7) {
                         validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1), null));
@@ -68,8 +71,8 @@ public class PawnMovesCalculator {
                 }
             }
             //If there are enemy pieces on a diagonal, those become valid moves.
-            if (board.getPiece(new ChessPosition( row - 1, col - 1)) != null || board.getPiece(new ChessPosition( row - 1, col + 1)) != null) {
-                if (board.getPiece(new ChessPosition( row - 1, col - 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            if (board.getPiece(new ChessPosition( row - 1, col - 1)) != null) {
+                if (board.getPiece(new ChessPosition(row - 1, col - 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
                     if (row != 2) {
                         validMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col - 1), null));
                     }
@@ -77,6 +80,8 @@ public class PawnMovesCalculator {
                         addAllPromotions(validMoves, myPosition, row - 1, col - 1);
                     }
                 }
+            }
+            if (board.getPiece(new ChessPosition( row - 1, col + 1)) != null) {
                 if (board.getPiece(new ChessPosition( row - 1, col + 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
                     if (row != 2) {
                         validMoves.add(new ChessMove(myPosition, new ChessPosition(row - 1, col + 1), null));
