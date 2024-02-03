@@ -64,7 +64,21 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        
+
+        ChessPiece startPiece = board.getPiece(move.getStartPosition());
+
+        if (move.getPromotionPiece() == null) {
+            board.addPiece(move.getStartPosition(), null);
+            board.addPiece(move.getEndPosition(), startPiece);
+        } else {
+            board.addPiece(move.getStartPosition(), null);
+            board.addPiece(move.getEndPosition(), new ChessPiece(startPiece.getTeamColor(), move.getPromotionPiece()));
+        }
+
+
+        // Make the board equal to the board after the chess move has been made.
+
+        // Call the isInCheck and isInCheckmate and isInSTal
 
         throw new RuntimeException("Not implemented");
     }
