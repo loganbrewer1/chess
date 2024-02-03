@@ -15,7 +15,10 @@ public class ChessGame {
     private TeamColor teamTurn;
 
     public ChessGame() {
-
+        //What else do I need here
+        teamTurn = TeamColor.WHITE;
+        board = new ChessBoard();
+        board.resetBoard();
     }
 
     /**
@@ -67,6 +70,16 @@ public class ChessGame {
 
         ChessPiece startPiece = board.getPiece(move.getStartPosition());
 
+        //If move.getEndPosition is in check throw invalid move
+
+        //If move.getEndPosition
+
+        //Code for preventing king from moving into check
+
+        //Code for moving a piece that would put the king in danger
+
+        //Code for moving a piece or the king so that you are no longer in check
+
         if (move.getPromotionPiece() == null) {
             board.addPiece(move.getStartPosition(), null);
             board.addPiece(move.getEndPosition(), startPiece);
@@ -75,8 +88,6 @@ public class ChessGame {
             board.addPiece(move.getEndPosition(), new ChessPiece(startPiece.getTeamColor(), move.getPromotionPiece()));
         }
 
-
-        // Make the board equal to the board after the chess move has been made.
 
         // Call the isInCheck and isInCheckmate and isInSTal
 
