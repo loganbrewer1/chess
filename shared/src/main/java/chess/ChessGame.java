@@ -67,18 +67,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
+        ChessBoard oldBoard = board;
         ChessPiece startPiece = board.getPiece(move.getStartPosition());
-
-        //If move.getEndPosition is in check throw invalid move
-
-        //If move.getEndPosition
-
-        //Code for preventing king from moving into check
-
-        //Code for moving a piece that would put the king in danger
-
-        //Code for moving a piece or the king so that you are no longer in check
+        TeamColor startPieceColor = startPiece.getTeamColor();
 
         if (move.getPromotionPiece() == null) {
             board.addPiece(move.getStartPosition(), null);
@@ -88,10 +79,18 @@ public class ChessGame {
             board.addPiece(move.getEndPosition(), new ChessPiece(startPiece.getTeamColor(), move.getPromotionPiece()));
         }
 
-
-        // Call the isInCheck and isInCheckmate and isInSTal
-
-        throw new RuntimeException("Not implemented");
+        if (isInCheckmate(startPieceColor)) {
+            System.out.println("You lose");
+            System.exit(0);
+        }
+        else if (isInStalemate(startPieceColor)) {
+            System.out.println("Stalemate");
+            System.exit(0);
+        }
+        else if (isInCheck(startPieceColor)) {
+            setBoard(oldBoard);
+            throw new InvalidMoveException("Invalid move");
+        }
     }
 
     /**
@@ -103,7 +102,6 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
-
         return stillInCheck(kingPosition);
     }
 
@@ -125,7 +123,6 @@ public class ChessGame {
                 }
             }
         }
-
         return isInCheckmate;
     }
 
@@ -137,22 +134,17 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        boolean isInStalemate = true;
-
-
         for (int i = 7; i >= 0; i--) {
             for (int j = 0; j <= 7; j++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(i,j));
                 if (currentPiece.getTeamColor() == teamColor) {
                     if (validMoves(new ChessPosition(i,j)) != null) {
-                        isInStalemate = false;
-                        break;
+                        return false;
                     }
                 }
             }
         }
-
-        return isInStalemate;
+        return true;
     }
 
     /**
