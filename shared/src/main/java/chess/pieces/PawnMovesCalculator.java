@@ -45,18 +45,20 @@ public class PawnMovesCalculator {
                 }
             }
 
-            if (col - 1 > 0)
-            if (board.getPiece(new ChessPosition( row + 1, col - 1)) != null) {
-                if (board.getPiece(new ChessPosition( row + 1, col - 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                    if (row != 7) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1), null));
-                    }
-                    if (row == 7) {
-                        addAllPromotions(validMoves, myPosition, row + 1, col - 1);
+            if (col - 1 > 0) {
+                if (board.getPiece(new ChessPosition( row + 1, col - 1)) != null) {
+                    if (board.getPiece(new ChessPosition( row + 1, col - 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                        if (row != 7) {
+                            validMoves.add(new ChessMove(myPosition, new ChessPosition(row + 1, col - 1), null));
+                        }
+                        if (row == 7) {
+                            addAllPromotions(validMoves, myPosition, row + 1, col - 1);
+                        }
                     }
                 }
             }
         }
+
 
         if (myPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             //If there isn't a piece 1 position in front of it... it can move there
