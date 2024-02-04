@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -53,9 +54,12 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> validMoves;
+        Collection<ChessMove> validMoves = Collections.emptyList();
 
-        validMoves = board.getPiece(startPosition).pieceMoves(board,startPosition);
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece != null) {
+            validMoves = piece.pieceMoves(board, startPosition);
+        }
 
         return validMoves;
     }
@@ -69,27 +73,35 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessBoard oldBoard = board;
         ChessPiece startPiece = board.getPiece(move.getStartPosition());
-        TeamColor startPieceColor = startPiece.getTeamColor();
+        TeamColor teamColor = getTeamTurn();
 
         if (move.getPromotionPiece() == null) {
             board.addPiece(move.getStartPosition(), null);
             board.addPiece(move.getEndPosition(), startPiece);
         } else {
             board.addPiece(move.getStartPosition(), null);
-            board.addPiece(move.getEndPosition(), new ChessPiece(startPiece.getTeamColor(), move.getPromotionPiece()));
+            board.addPiece(move.getEndPosition(), new ChessPiece(teamColor, move.getPromotionPiece()));
         }
 
-        if (isInCheckmate(startPieceColor)) {
+        if (isInCheckmate(teamColor)) {
             System.out.println("You lose");
             System.exit(0);
         }
-        else if (isInStalemate(startPieceColor)) {
+        else if (isInStalemate(teamColor)) {
             System.out.println("Stalemate");
             System.exit(0);
         }
-        else if (isInCheck(startPieceColor)) {
+        else if (isInCheck(teamColor)) {
             setBoard(oldBoard);
             throw new InvalidMoveException("Invalid move");
+        }
+        else {
+            if (teamColor == TeamColor.WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            }
+            else {
+                setTeamTurn(TeamColor.WHITE);
+            }
         }
     }
 
@@ -134,11 +146,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        for (int i = 7; i >= 0; i--) {
-            for (int j = 0; j <= 7; j++) {
+        for (int i = 8; i >= 1; i--) {
+            for (int j = 1; j <= 8; j++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(i,j));
                 if (currentPiece.getTeamColor() == teamColor) {
-                    if (validMoves(new ChessPosition(i,j)) != null) {
+                    if (!validMoves(new ChessPosition(i,j)).isEmpty()) {
                         return false;
                     }
                 }
@@ -168,10 +180,10 @@ public class ChessGame {
     private ChessPosition getKingPosition(TeamColor teamColor) {
         ChessPosition kingPosition = null;
 
-        for (int i = 7; i >= 0; i--) {
-            for (int j = 0; j <= 7; j++) {
+        for (int i = 8; i >= 1; i--) {
+            for (int j = 1; j <= 8; j++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(i, j));
-                if (currentPiece.getTeamColor() == teamColor && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                if (currentPiece != null && currentPiece.getTeamColor() == teamColor && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
                     kingPosition = new ChessPosition(i,j);
                 }
             }
@@ -180,8 +192,9 @@ public class ChessGame {
     }
 
     private boolean stillInCheck(ChessPosition kingPosition) {
-        for (int i = 7; i >= 0; i--) {
-            for (int j = 0; j <= 7; j++) {
+
+        for (int i = 8; i >= 1; i--) {
+            for (int j = 1; j <= 8; j++) {
                 for (ChessMove move : validMoves(new ChessPosition(i,j))) {
                     if (move.getEndPosition() == kingPosition) {
                         return true;

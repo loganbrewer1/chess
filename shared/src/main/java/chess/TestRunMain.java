@@ -11,15 +11,17 @@ import chess.pieces.PawnMovesCalculator;
 
 public class TestRunMain {
     public static void main(String[] args) {
-        ChessBoard chessBoard = new ChessBoard();
+        ChessGame myGame = new ChessGame();
 
-        chessBoard.addPiece(new ChessPosition(2, 3), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
-        chessBoard.printBoard();
+        myGame.getBoard().printBoard();
+        ChessPosition startPosition = new ChessPosition(2,4);
+        ChessPosition endPosition = new ChessPosition(4,4);
 
-        ChessPiece myPawn = chessBoard.getPiece(new ChessPosition(2,3));
-
-        for (ChessMove possibleMove : myPawn.pieceMoves(chessBoard,new ChessPosition(2,3))) {
-            System.out.println(possibleMove.getEndPosition());
+        try {
+            myGame.makeMove(new ChessMove(startPosition, endPosition, null));
+        } catch (InvalidMoveException e) {
+            System.out.println(e.getMessage());
         }
+
     }
 }
