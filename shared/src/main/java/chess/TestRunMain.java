@@ -13,7 +13,9 @@ public class TestRunMain {
     public static void main(String[] args) {
         ChessGame myGame = new ChessGame();
 
+        System.out.println("Before move");
         myGame.getBoard().printBoard();
+
         ChessPosition startPosition = new ChessPosition(2,4);
         ChessPosition endPosition = new ChessPosition(4,4);
 
@@ -23,5 +25,8 @@ public class TestRunMain {
             System.out.println(e.getMessage());
         }
 
+        System.out.println();
+        System.out.println("After move");
+        myGame.getBoard().printBoard();
     }
 }

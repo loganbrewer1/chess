@@ -198,7 +198,7 @@ public class ChessGame {
         for (int i = 8; i >= 1; i--) {
             for (int j = 1; j <= 8; j++) {
                 for (ChessMove move : validMoves(new ChessPosition(i,j))) {
-                    if (move.getEndPosition() == kingPosition) {
+                    if (move.getEndPosition().getRow() == kingPosition.getRow() && move.getEndPosition().getColumn() == kingPosition.getColumn()) {
                         return true;
                     }
                 }
