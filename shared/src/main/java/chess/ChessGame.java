@@ -194,7 +194,9 @@ public class ChessGame {
     }
 
     private boolean stillInCheck(ChessPosition kingPosition) {
-
+        if (kingPosition == null) { //Not sure when this occurs but it solves a problem
+            return false;
+        }
         for (int i = 8; i >= 1; i--) {
             for (int j = 1; j <= 8; j++) {
                 for (ChessMove move : validMoves(new ChessPosition(i,j))) {
