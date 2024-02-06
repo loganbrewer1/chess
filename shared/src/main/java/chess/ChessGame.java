@@ -63,6 +63,10 @@ public class ChessGame {
         if (piece != null) {
             testMoves = piece.pieceMoves(board, startPosition);
             for (ChessMove move : testMoves) {
+                ChessPiece tempPiece = null;
+                if (board.getPiece(move.getEndPosition()) != null) {
+                    tempPiece = board.getPiece(move.getEndPosition());
+                }
                 board.addPiece(move.getStartPosition(), null);
                 board.addPiece(move.getEndPosition(), piece);
                 if (!isInCheck(teamTurn)) {
@@ -70,7 +74,11 @@ public class ChessGame {
                 }
                 board.addPiece(move.getEndPosition(), null);
                 board.addPiece(move.getStartPosition(), piece);
+                if (tempPiece != null) {
+                    board.addPiece(move.getEndPosition(),tempPiece);
+                }
             }
+
         }
 
         board = tempBoard;
