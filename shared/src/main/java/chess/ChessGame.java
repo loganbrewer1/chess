@@ -55,16 +55,25 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> validMoves = Collections.emptyList();
-        Collection<ChessMove> testMoves = Collections.emptyList();
+        Collection<ChessMove> validMoves = new HashSet<>();
+        ChessBoard tempBoard = board; //Make a copy
+        Collection<ChessMove> testMoves = new HashSet<>();
 
         ChessPiece piece = board.getPiece(startPosition);
         if (piece != null) {
             testMoves = piece.pieceMoves(board, startPosition);
-            for (ChessMove moves : testMoves) {
-                
+            for (ChessMove move : testMoves) {
+                board.addPiece(move.getStartPosition(), null);
+                board.addPiece(move.getEndPosition(), piece);
+                if (!isInCheck(teamTurn)) {
+                    validMoves.add(move);
+                }
+                board.addPiece(move.getEndPosition(), null);
+                board.addPiece(move.getStartPosition(), piece);
             }
         }
+
+        board = tempBoard;
 
         return validMoves;
     }
@@ -141,7 +150,7 @@ public class ChessGame {
             return false;
         }
         else if (isInCheck(teamColor)) {
-            for (ChessMove move : validMoves(kingPosition)) {
+            for (ChessMove move : allMoves(kingPosition)) {
                 board.addPiece(move.getStartPosition(), null);
                 board.addPiece(move.getEndPosition(), new ChessPiece(teamColor, ChessPiece.PieceType.KING));
                 if (!stillInCheck(move.getEndPosition(), teamColor)) {
@@ -216,7 +225,7 @@ public class ChessGame {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(i,j));
                 if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
-                    for (ChessMove move : validMoves(new ChessPosition(i,j))) {
+                    for (ChessMove move : allMoves(new ChessPosition(i,j))) {
                         if (move.getEndPosition().getRow() == kingPosition.getRow() && move.getEndPosition().getColumn() == kingPosition.getColumn()) {
                             return true;
                         }
@@ -226,6 +235,17 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    public Collection<ChessMove> allMoves(ChessPosition startPosition) {
+        Collection<ChessMove> allMoves = Collections.emptyList();
+
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece != null) {
+            allMoves = piece.pieceMoves(board, startPosition);
+        }
+
+        return allMoves;
     }
 
     @Override

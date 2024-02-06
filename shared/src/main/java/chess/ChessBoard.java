@@ -105,6 +105,25 @@ public class ChessBoard {
         }
     }
 
+    public ChessBoard deepCopy() {
+        ChessBoard newCopy = new ChessBoard();
+
+        for (int i = 8; i >= 1; i--) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = board[i][j];
+                if (currentPiece != null) {
+                    ChessPiece newPiece = new ChessPiece(currentPiece.getTeamColor(), currentPiece.getPieceType());
+                    newCopy.addPiece(currentPosition, newPiece);
+                }
+            }
+        }
+
+        return newCopy;
+    }
+
+
+
     @Override
     public String toString() {
         return "ChessBoard{" +
