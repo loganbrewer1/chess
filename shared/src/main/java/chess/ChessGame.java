@@ -63,13 +63,14 @@ public class ChessGame {
         if (piece != null) {
             testMoves = piece.pieceMoves(board, startPosition);
             for (ChessMove move : testMoves) {
+                ChessPiece currentPiece = board.getPiece(move.getStartPosition());
                 ChessPiece tempPiece = null;
                 if (board.getPiece(move.getEndPosition()) != null) {
                     tempPiece = board.getPiece(move.getEndPosition());
                 }
                 board.addPiece(move.getStartPosition(), null);
                 board.addPiece(move.getEndPosition(), piece);
-                if (!isInCheck(teamTurn)) {
+                if (!isInCheck(currentPiece.getTeamColor())) {
                     validMoves.add(move);
                 }
                 board.addPiece(move.getEndPosition(), null);
