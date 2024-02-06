@@ -56,7 +56,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> validMoves = new HashSet<>();
-        ChessBoard tempBoard = board; //Make a copy
+        ChessBoard tempBoard = board.deepCopy(); //Make a copy
         Collection<ChessMove> testMoves = new HashSet<>();
 
         ChessPiece piece = board.getPiece(startPosition);
@@ -85,7 +85,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessBoard oldBoard = board;
+        ChessBoard oldBoard = board.deepCopy();
         ChessPiece startPiece = board.getPiece(move.getStartPosition());
         TeamColor teamColor = getTeamTurn();
 
