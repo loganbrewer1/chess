@@ -14,10 +14,11 @@ public class TestRunMain {
         ChessGame myGame = new ChessGame();
 
         System.out.println("Before move");
+        myGame.getBoard().addPiece(new ChessPosition(6,2),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         myGame.getBoard().printBoard();
 
-        ChessPosition startPosition = new ChessPosition(2,4);
-        ChessPosition endPosition = new ChessPosition(4,4);
+        ChessPosition startPosition = new ChessPosition(1,1);
+        ChessPosition endPosition = new ChessPosition(4,1);
 
         try {
             myGame.makeMove(new ChessMove(startPosition, endPosition, null));

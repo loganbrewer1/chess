@@ -3,6 +3,7 @@ package chess;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -55,10 +56,14 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> validMoves = Collections.emptyList();
+        Collection<ChessMove> testMoves = Collections.emptyList();
 
         ChessPiece piece = board.getPiece(startPosition);
         if (piece != null) {
-            validMoves = piece.pieceMoves(board, startPosition);
+            testMoves = piece.pieceMoves(board, startPosition);
+            for (ChessMove moves : testMoves) {
+                
+            }
         }
 
         return validMoves;
@@ -75,6 +80,12 @@ public class ChessGame {
         ChessPiece startPiece = board.getPiece(move.getStartPosition());
         TeamColor teamColor = getTeamTurn();
 
+        if (startPiece.getTeamColor() != teamColor) {
+            throw new InvalidMoveException("Invalid move exception");
+        }
+        if (!startPiece.pieceMoves(board,move.getStartPosition()).contains(move)) {
+            throw new InvalidMoveException("Invalid move exception");
+        }
         if (move.getPromotionPiece() == null) {
             board.addPiece(move.getStartPosition(), null);
             board.addPiece(move.getEndPosition(), startPiece);
@@ -85,11 +96,11 @@ public class ChessGame {
 
         if (isInCheckmate(teamColor)) {
             System.out.println("You lose");
-            System.exit(0);
+            //System.exit(0);
         }
         else if (isInStalemate(teamColor)) {
             System.out.println("Stalemate");
-            System.exit(0);
+            //System.exit(0);
         }
         else if (isInCheck(teamColor)) {
             setBoard(oldBoard);
@@ -114,7 +125,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
-        return stillInCheck(kingPosition);
+        return stillInCheck(kingPosition, teamColor);
     }
 
     /**
@@ -131,7 +142,11 @@ public class ChessGame {
         }
         else if (isInCheck(teamColor)) {
             for (ChessMove move : validMoves(kingPosition)) {
-                if (!stillInCheck(move.getEndPosition())) {
+                board.addPiece(move.getStartPosition(), null);
+                board.addPiece(move.getEndPosition(), new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+                if (!stillInCheck(move.getEndPosition(), teamColor)) {
+                    board.addPiece(move.getEndPosition(), null);
+                    board.addPiece(kingPosition, new ChessPiece(teamColor, ChessPiece.PieceType.KING));
                     return false;
                 }
             }
@@ -193,19 +208,44 @@ public class ChessGame {
         return kingPosition;
     }
 
-    private boolean stillInCheck(ChessPosition kingPosition) {
+    private boolean stillInCheck(ChessPosition kingPosition, TeamColor teamColor) {
         if (kingPosition == null) { //Not sure when this occurs but it solves a problem
             return false;
         }
         for (int i = 8; i >= 1; i--) {
             for (int j = 1; j <= 8; j++) {
-                for (ChessMove move : validMoves(new ChessPosition(i,j))) {
-                    if (move.getEndPosition().getRow() == kingPosition.getRow() && move.getEndPosition().getColumn() == kingPosition.getColumn()) {
-                        return true;
+                ChessPiece currentPiece = board.getPiece(new ChessPosition(i,j));
+                if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
+                    for (ChessMove move : validMoves(new ChessPosition(i,j))) {
+                        if (move.getEndPosition().getRow() == kingPosition.getRow() && move.getEndPosition().getColumn() == kingPosition.getColumn()) {
+                            return true;
+                        }
                     }
                 }
+
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, teamTurn);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "board=" + board +
+                ", teamTurn=" + teamTurn +
+                '}';
     }
 }
