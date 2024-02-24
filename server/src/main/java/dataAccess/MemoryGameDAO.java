@@ -1,26 +1,31 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryGameDAO {
-    private final Map<Integer, ChessGame> gameMap = new HashMap<>();
+public class MemoryGameDAO implements GameDAO {
+    private final Map<Integer, GameData> gameMap = new HashMap<>();
 
-    public void createGame(int gameID, ChessGame game) {
-        gameMap.put(gameID, game);
+    public void clearGames() {
+        gameMap.clear();
+    };
+
+    public void createGame(GameData newGame) {
+        gameMap.put(newGame.gameID(), newGame);
     }
 
-    public ChessGame getGame(int gameID) {
+    public GameData getGame(int gameID) {
         return gameMap.get(gameID);
     }
 
-    public Map<Integer, ChessGame> listGames() {
+    public Map<Integer, GameData> listGames() {
         return new HashMap<>(gameMap);
     }
 
-    public void updateGame(int gameID, ChessGame updatedGame) {
-        gameMap.put(gameID, updatedGame);
+    public void updateGame(GameData updatedGame) {
+        gameMap.put(updatedGame.gameID(), updatedGame);
     }
 }

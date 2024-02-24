@@ -1,12 +1,14 @@
 package dataAccess;
+import model.AuthData;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryAuthDAO {
-    private final Map<String, String> authTokenMap = new HashMap<>(); // Map to store authToken-user mappings
+public class MemoryAuthDAO implements AuthDAO {
+    private final Map<String, String> authTokenMap = new HashMap<>();
 
-    public void createAuth(String authToken, String username) {
-        authTokenMap.put(authToken, username);
+    public void createAuth(AuthData authData) {
+        authTokenMap.put(authData.authToken(), authData.username());
     }
 
     public String getAuth(String authToken) {
@@ -15,6 +17,10 @@ public class MemoryAuthDAO {
 
     public void deleteAuth(String authToken) {
         authTokenMap.remove(authToken);
+    }
+
+    public void clearAuth() {
+        authTokenMap.clear();
     }
 }
 

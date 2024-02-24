@@ -5,10 +5,10 @@ import model.UserData;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryUserDAO {
+public class MemoryUserDAO implements UserDAO {
     private final Map<String, UserData> users = new HashMap<>();
 
-   public void clear() throws DataAccessException {
+   public void clearUsers() throws DataAccessException {
         users.clear();
     }
 
