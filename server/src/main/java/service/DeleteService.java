@@ -1,8 +1,36 @@
 package service;
 
+import dataAccess.AuthDAO;
+import dataAccess.DataAccessException;
+import dataAccess.GameDAO;
+import dataAccess.UserDAO;
+
 public class DeleteService {
-    public void DeleteEverything() {}
-    public void DeleteUsers() {}
-    public void DeleteGames() {}
-    public void DeleteAuth() {}
+    private final UserDAO userDatabase;
+    private final AuthDAO authDatabase;
+    private final GameDAO gameDatabase;
+
+    public DeleteService(UserDAO userDatabase, AuthDAO authDatabase, GameDAO gameDatabase) {
+        this.userDatabase = userDatabase;
+        this.authDatabase = authDatabase;
+        this.gameDatabase = gameDatabase;
+    }
+
+    public void DeleteEverything() {
+        try {
+            userDatabase.clearUsers();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            authDatabase.clearAuth();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            gameDatabase.clearGames();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
