@@ -5,6 +5,7 @@ import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO {
     private final Map<Integer, GameData> gameMap = new HashMap<>();
@@ -27,5 +28,18 @@ public class MemoryGameDAO implements GameDAO {
 
     public void updateGame(GameData updatedGame) {
         gameMap.put(updatedGame.gameID(), updatedGame);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemoryGameDAO that = (MemoryGameDAO) o;
+        return Objects.equals(gameMap, that.gameMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gameMap);
     }
 }
