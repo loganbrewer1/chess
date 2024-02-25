@@ -42,13 +42,22 @@ public class UserService {
             if (!Objects.equals(userDatabase.getUser(login.username()).password(), login.password())) { //Intelleji suggested this instead of !=. Check here later if something does not work.
                 throw new RuntimeException("Password does not match");
             }
-            return new LoginResult(login.username(), CreateAuthToken());
+            String newAuthToken = CreateAuthToken();
+            authDatabase.createAuth(new AuthData(newAuthToken, login.username()));
+            return new LoginResult(login.username(), newAuthToken);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
-    public void logout(UserData user) {
-        
+    public void logout(String authToken) {
+        try {
+            if (authDatabase.getAuth(authToken) == null) {
+                throw new RuntimeException("Not a valid authToken");
+            }
+            authDatabase.deleteAuth(authToken);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String CreateAuthToken() {

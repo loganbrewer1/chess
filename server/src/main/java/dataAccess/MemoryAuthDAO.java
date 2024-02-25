@@ -9,7 +9,7 @@ public class MemoryAuthDAO implements AuthDAO {
     private final Map<String, String> authTokenMap = new HashMap<>();
 
     public void createAuth(AuthData authData) {
-        authTokenMap.put(authData.username(), authData.authToken());
+        authTokenMap.put(authData.authToken(), authData.username());
     }
 
     public String getAuth(String authToken) {
