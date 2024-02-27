@@ -1,13 +1,10 @@
 package service;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
-
-import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,7 +56,7 @@ public class GameService {
             } else if (Objects.equals(playerColor, "BLACK")) {
                 gameDatabase.updateGame(new GameData(gameID, null, username, oldGame.gameName(),oldGame.game()));
             }
-            //Observer case? 
+            //Observer case?
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

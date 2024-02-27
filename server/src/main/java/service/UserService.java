@@ -28,7 +28,7 @@ public class UserService {
             }
             String authToken = CreateAuthToken();
 
-            return new AuthData(user.username(), authToken);
+            return new AuthData(authToken, user.username());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
