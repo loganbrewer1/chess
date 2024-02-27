@@ -27,7 +27,7 @@ public class UserService {
                 throw new RuntimeException("Username already exists");
             }
             String authToken = CreateAuthToken();
-
+            authDatabase.insertAuth(new AuthData(authToken, user.username()));
             return new AuthData(authToken, user.username());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -43,7 +43,7 @@ public class UserService {
                 throw new RuntimeException("Password does not match");
             }
             String newAuthToken = CreateAuthToken();
-            authDatabase.createAuth(new AuthData(newAuthToken, login.username()));
+            authDatabase.insertAuth(new AuthData(newAuthToken, login.username()));
             return new LoginResult(login.username(), newAuthToken);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);

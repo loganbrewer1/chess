@@ -38,8 +38,8 @@ public class Server {
         Spark.delete("/session", this::LogoutHandler);
         Spark.get("/game", this::ListGamesHandler);
         Spark.post("/game", this::CreateGameHandler);
-        Spark.put("/game", this::JoinGameHandler);
-        Spark.delete("/db", this::DeleteHandler);*/
+        Spark.put("/game", this::JoinGameHandler);*/
+        Spark.delete("/db", this::DeleteHandler);
         Spark.get("/error", this::throwError);
 
         Spark.exception(Exception.class, this::errorHandler);
@@ -73,10 +73,14 @@ public class Server {
     }
 
     private Object LoginHandler(Request req, Response res) {
-    }
+    }*/
 
     private Object DeleteHandler(Request req, Response res) {
-    }*/
+        String authToken = req.headers("Authorization");
+        deleteService.DeleteEverything(authToken);
+        res.status(200);
+        return "Data deleted";
+    }
 
     private Object throwError(Request req, Response res) {
         throw new RuntimeException("Server on fire");
