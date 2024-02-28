@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataAccess.*;
 import model.AuthData;
 import model.UserData;
@@ -34,11 +35,11 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.post("/user", this::RegisterHandler);
-/*        Spark.post("/session", this::LoginHandler);
+        Spark.post("/session", this::LoginHandler);
         Spark.delete("/session", this::LogoutHandler);
         Spark.get("/game", this::ListGamesHandler);
         Spark.post("/game", this::CreateGameHandler);
-        Spark.put("/game", this::JoinGameHandler);*/
+        Spark.put("/game", this::JoinGameHandler);
         Spark.delete("/db", this::DeleteHandler);
         Spark.get("/error", this::throwError);
 
@@ -53,27 +54,35 @@ public class Server {
     }
 
     private Object RegisterHandler(Request req, Response res) { //How do I test this?
-        var serializer = new Gson();
-        UserData newUser = serializer.fromJson(req.body(), UserData.class);
+        UserData newUser = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = userService.register(newUser);
         res.type("application/json");
-        return serializer.toJson(authData);
+        return new Gson().toJson(authData);
     }
-
-    /*private Object JoinGameHandler(Request req, Response res) {
+    private Object JoinGameHandler(Request req, Response res) {
+        return res;
     }
 
     private Object CreateGameHandler(Request req, Response res) {
+        String authToken = req.headers("Authorization");
+        Map<String, String> bodyObj = getBody(req, Map.class);
+        String gameName = bodyObj.get("gameName");
+        int gameID = gameService.CreateGame(authToken, gameName);
+        res.type("application/json");
+        return new Gson().toJson(Map.of("gameID", gameID));
     }
 
     private Object ListGamesHandler(Request req, Response res) {
+        return res;
     }
 
     private Object LogoutHandler(Request req, Response res) {
+        return res;
     }
 
     private Object LoginHandler(Request req, Response res) {
-    }*/
+        return res;
+    }
 
     private Object DeleteHandler(Request req, Response res) {
         String authToken = req.headers("Authorization");
@@ -91,6 +100,14 @@ public class Server {
         res.type("application/json");
         res.status(500);
         res.body(body);
+        return body;
+    }
+
+    private static <T> T getBody(Request request, Class<T> clazz) {
+        T body = new Gson().fromJson(request.body(), clazz);
+        if (body == null) {
+            throw new RuntimeException("Missing required body");
+        }
         return body;
     }
 
