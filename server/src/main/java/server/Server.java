@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.*;
 import model.AuthData;
+import model.JoinGameRequest;
 import model.UserData;
 import service.DeleteService;
 import service.GameService;
@@ -54,13 +55,17 @@ public class Server {
     }
 
     private Object RegisterHandler(Request req, Response res) { //How do I test this?
-        UserData newUser = new Gson().fromJson(req.body(), UserData.class);
-        AuthData authData = userService.register(newUser);
+        UserData bodyObj = getBody(req, UserData.class);
+        AuthData authData = userService.register(bodyObj);
         res.type("application/json");
         return new Gson().toJson(authData);
     }
     private Object JoinGameHandler(Request req, Response res) {
-        return res;
+        String authToken = req.headers("Authorization");
+        JoinGameRequest bodyObj = getBody(req, JoinGameRequest.class);
+        gameService.JoinGame(authToken, bodyObj.playerColor(), bodyObj.gameID());
+        res.type("application/json");
+        return " " + res.status();
     }
 
     private Object CreateGameHandler(Request req, Response res) {
