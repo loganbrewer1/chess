@@ -78,7 +78,9 @@ public class Server {
     }
 
     private Object ListGamesHandler(Request req, Response res) {
-        return res;
+        String authToken = req.headers("Authorization");
+        res.type("application/json");
+        return new Gson().toJson(gameService.ListGames(authToken));
     }
 
     private Object LogoutHandler(Request req, Response res) {
