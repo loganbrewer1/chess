@@ -66,7 +66,7 @@ public class Server {
         JoinGameRequest bodyObj = getBody(req, JoinGameRequest.class);
         gameService.JoinGame(authToken, bodyObj.playerColor(), bodyObj.gameID());
         res.type("application/json");
-        return " " + res.status();
+        return new Gson().toJson(Map.of("message", "Join successful"));
     }
 
     private Object CreateGameHandler(Request req, Response res) {
@@ -85,21 +85,28 @@ public class Server {
     }
 
     private Object LoginHandler(Request req, Response res) {
-        UserData bodyObj = getBody(req, UserData.class);
-        return new Gson().toJson(userService.login(new LoginRequest(bodyObj.username(),bodyObj.password())));
+        try {
+            UserData bodyObj = getBody(req, UserData.class);
+            return new Gson().toJson(userService.login(new LoginRequest(bodyObj.username(), bodyObj.password())));
+        } catch (RuntimeException e) {
+            res.status(401); // Unauthorized
+            return new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+        }
     }
 
     private Object LogoutHandler(Request req, Response res) {
         String authToken = req.headers("Authorization");
         userService.logout(authToken);
-        return " " + res.status();
+        res.status(200);
+        res.type("application/json");
+        return new Gson().toJson(Map.of("message", "Logout successful"));
     }
 
     private Object DeleteHandler(Request req, Response res) {
         String authToken = req.headers("Authorization");
         deleteService.DeleteEverything(authToken);
         res.status(200);
-        return "Data deleted";
+        return new Gson().toJson(Map.of("message", "Data Deleted"));
     }
 
     private Object throwError(Request req, Response res) {

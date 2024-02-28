@@ -7,10 +7,7 @@ import dataAccess.GameDAO;
 import model.GameData;
 import model.ListGamesResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class GameService {
 
@@ -23,7 +20,7 @@ public class GameService {
         this.gameDatabase = gameDatabase;
     }
 
-    public List<ListGamesResult> ListGames(String authToken) {
+    public Map<String, List<ListGamesResult>> ListGames(String authToken) {
         try {
             if (authDatabase.getAuth(authToken) == null) {
                 throw new RuntimeException("Not a valid authToken");
@@ -33,7 +30,9 @@ public class GameService {
             for (GameData gameData : allGames.values()) {
                 resultList.add(new ListGamesResult(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName()));
             }
-            return resultList;
+            Map<String, List<ListGamesResult>> result = new HashMap<>();
+            result.put("games", resultList);
+            return result;
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
