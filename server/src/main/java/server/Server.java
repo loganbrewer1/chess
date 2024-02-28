@@ -55,11 +55,25 @@ public class Server {
         return Spark.port();
     }
 
-    private Object RegisterHandler(Request req, Response res) { //How do I test this?
-        UserData bodyObj = getBody(req, UserData.class);
-        AuthData authData = userService.register(bodyObj);
-        res.type("application/json");
-        return new Gson().toJson(authData);
+    private Object RegisterHandler(Request req, Response res) {
+        try {
+            UserData bodyObj = getBody(req, UserData.class);
+            AuthData authData = userService.register(bodyObj);
+            res.type("application/json");
+            return new Gson().toJson(authData);
+        } catch (RuntimeException e) {
+            System.out.println("Exception message: " + e.getMessage());
+            if (e.getMessage().equals("Bad request")) {
+                res.status(400);
+                return new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
+            } else if (e.getMessage().equals("Username already exists")) {
+                res.status(403);
+                return new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
+            } else {
+                res.status(500); // Description error
+                return new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+            }
+        }
     }
     private Object JoinGameHandler(Request req, Response res) {
         String authToken = req.headers("Authorization");

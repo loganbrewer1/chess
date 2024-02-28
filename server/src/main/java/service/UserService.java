@@ -21,6 +21,9 @@ public class UserService {
     }
     public AuthData register(UserData user) {
         try {
+            if ((user == null || user.username() == null || user.password() == null || user.email() == null)) {
+                throw new RuntimeException("Bad request");
+            }
             if (userDatabase.getUser(user.username()) == null) {
                 userDatabase.insertUser(user);
             }  else  {
