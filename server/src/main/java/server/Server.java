@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import dataAccess.*;
 import model.AuthData;
 import model.JoinGameRequest;
+import model.LoginRequest;
 import model.UserData;
 import service.DeleteService;
 import service.GameService;
@@ -83,12 +84,15 @@ public class Server {
         return new Gson().toJson(gameService.ListGames(authToken));
     }
 
-    private Object LogoutHandler(Request req, Response res) {
-        return res;
+    private Object LoginHandler(Request req, Response res) {
+        UserData bodyObj = getBody(req, UserData.class);
+        return new Gson().toJson(userService.login(new LoginRequest(bodyObj.username(),bodyObj.password())));
     }
 
-    private Object LoginHandler(Request req, Response res) {
-        return res;
+    private Object LogoutHandler(Request req, Response res) {
+        String authToken = req.headers("Authorization");
+        userService.logout(authToken);
+        return " " + res.status();
     }
 
     private Object DeleteHandler(Request req, Response res) {
