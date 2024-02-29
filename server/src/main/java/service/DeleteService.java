@@ -16,11 +16,8 @@ public class DeleteService {
         this.gameDatabase = gameDatabase;
     }
 
-    public void DeleteEverything(String authToken) {
+    public void DeleteEverything() {
         try {
-            if (authDatabase.getAuth(authToken) == null) {
-                throw new RuntimeException("Not a valid authToken");
-            }
             userDatabase.clearUsers();
             authDatabase.clearAuth();
             gameDatabase.clearGames();

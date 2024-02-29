@@ -58,11 +58,19 @@ public class GameService {
             if (username == null) {
                 throw new RuntimeException("Not a valid authToken");
             }
-
+            if (oldGame == null) {
+                throw new RuntimeException("Bad request");
+            }
             if (Objects.equals(playerColor, "WHITE")) {
-                gameDatabase.updateGame(new GameData(gameID, username, null, oldGame.gameName(),oldGame.game()));
+                if (oldGame.whiteUsername() != null) {
+                    throw new RuntimeException("Already taken");
+                }
+                gameDatabase.updateGame(new GameData(gameID, username, oldGame.blackUsername(), oldGame.gameName(),oldGame.game()));
             } else if (Objects.equals(playerColor, "BLACK")) {
-                gameDatabase.updateGame(new GameData(gameID, null, username, oldGame.gameName(),oldGame.game()));
+                if (oldGame.blackUsername() != null) {
+                    throw new RuntimeException("Already taken");
+                }
+                gameDatabase.updateGame(new GameData(gameID, oldGame.whiteUsername(), username, oldGame.gameName(),oldGame.game()));
             }
             //Observer case?
         } catch (DataAccessException e) {
@@ -72,5 +80,18 @@ public class GameService {
 
     private int createGameID() {
         return nextGameID++;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameService that = (GameService) o;
+        return nextGameID == that.nextGameID && Objects.equals(authDatabase, that.authDatabase) && Objects.equals(gameDatabase, that.gameDatabase);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(authDatabase, gameDatabase, nextGameID);
     }
 }
