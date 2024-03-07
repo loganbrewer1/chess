@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -10,7 +11,14 @@ public class DBGameDAO implements GameDAO {
     private final Map<Integer, GameData> gameMap = new HashMap<>();
 
     public void clearGames() {
-        gameMap.clear();
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM gamedata" )) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     };
 
     public void createGame(GameData newGame) {

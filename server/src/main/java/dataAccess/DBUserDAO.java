@@ -15,7 +15,7 @@ public class DBUserDAO implements UserDAO {
    public void clearUsers() throws DataAccessException {
        try {
            var conn = DatabaseManager.getConnection();
-           try (var preparedStatement = conn.prepareStatement("DELETE FROM userData" )) {
+           try (var preparedStatement = conn.prepareStatement("DELETE FROM userdata" )) {
                preparedStatement.executeUpdate();
            }
        } catch (DataAccessException | SQLException e) {
@@ -29,7 +29,7 @@ public class DBUserDAO implements UserDAO {
 
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)" )) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO userdata (username, password, email) VALUES(?, ?, ?)" )) {
                 preparedStatement.setString(1, user.username());
                 preparedStatement.setString(2, hashedPassword);
                 preparedStatement.setString(3, user.email());
@@ -44,7 +44,7 @@ public class DBUserDAO implements UserDAO {
     public UserData getUser(String username) {
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("SELECT * FROM UserData WHERE username = ?" )) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM userdata WHERE username = ?" )) {
                 preparedStatement.setString(1, username);
                 var rs = preparedStatement.executeQuery();
                 return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));

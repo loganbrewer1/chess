@@ -14,7 +14,7 @@ public class DBAuthDAO implements AuthDAO {
     public void insertAuth(AuthData authData) {
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToken, username) VALUES(?, ?)" )) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO authdata (authToken, username) VALUES(?, ?)" )) {
                 preparedStatement.setString(1, authData.authToken());
                 preparedStatement.setString(2, authData.username());
 
@@ -28,7 +28,7 @@ public class DBAuthDAO implements AuthDAO {
     public String getAuth(String authToken) {
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM AuthData WHERE authToken = ?" )) {
+            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authdata WHERE authToken = ?" )) {
                 preparedStatement.setString(1, authToken);
                 var rs = preparedStatement.executeQuery();
                 return rs.getString("authToken");
@@ -41,7 +41,7 @@ public class DBAuthDAO implements AuthDAO {
     public void deleteAuth(String authToken) {
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData WHERE authToken = ?" )) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM authdata WHERE authToken = ?" )) {
                 preparedStatement.setString(1, authToken);
 
                 preparedStatement.executeUpdate();
@@ -54,7 +54,7 @@ public class DBAuthDAO implements AuthDAO {
     public void clearAuth() {
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData" )) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM authdata" )) {
                 preparedStatement.executeUpdate();
             }
         } catch (DataAccessException | SQLException e) {
