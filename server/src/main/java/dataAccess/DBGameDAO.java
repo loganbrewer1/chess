@@ -35,10 +35,10 @@ public class DBGameDAO implements GameDAO {
                 var gameJson = new Gson().toJson(newGame.game());
                 preparedStatement.setString(4, gameJson);
 
-                var resultSet = preparedStatement.getGeneratedKeys();
+                var rs = preparedStatement.getGeneratedKeys();
                 var ID = 0;
-                if (resultSet.next()) {
-                    ID = resultSet.getInt(1);
+                if (rs.next()) {
+                    ID = rs.getInt(1);
                 }
 
                 preparedStatement.executeUpdate();
@@ -55,7 +55,7 @@ public class DBGameDAO implements GameDAO {
             try (var preparedStatement = conn.prepareStatement("SELECT * FROM gamedata WHERE gameID = ?" )) {
                 preparedStatement.setInt(1, gameID);
                 var rs = preparedStatement.executeQuery();
-                String gameJson = rs.getString("game");
+                String gameJson = rs.getString("game"); //TODO: Might need to check rs.next
                 ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
                 return new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game);
             }
@@ -65,7 +65,22 @@ public class DBGameDAO implements GameDAO {
     }
 
     public Map<Integer, GameData> listGames() {
-        return new HashMap<>(gameMap);
+        Map<Integer, GameData> allGames = new HashMap<>();
+
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM gamedata" )) {
+                var rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    String gameJson = rs.getString("game"); //TODO: Might need to check rs.next
+                    ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+                    allGames.put(rs.getInt("gameID"),new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game));
+                }
+                return allGames;
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void updateGame(GameData updatedGame) {
