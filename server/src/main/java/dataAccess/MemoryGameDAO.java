@@ -8,14 +8,18 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO {
+
+    private int nextGameID = 100;
     private final Map<Integer, GameData> gameMap = new HashMap<>();
 
     public void clearGames() {
         gameMap.clear();
     };
 
-    public void createGame(GameData newGame) {
-        gameMap.put(newGame.gameID(), newGame);
+    public Integer createGame(GameData newGame) {
+        int newID = createGameID();
+        gameMap.put(newID, newGame);
+        return newID;
     }
 
     public GameData getGame(int gameID) {
@@ -28,6 +32,10 @@ public class MemoryGameDAO implements GameDAO {
 
     public void updateGame(GameData updatedGame) {
         gameMap.put(updatedGame.gameID(), updatedGame);
+    }
+
+    private int createGameID() {
+        return nextGameID++;
     }
 
     @Override

@@ -37,14 +37,12 @@ public class GameService {
             throw new RuntimeException(e);
         }
     }
-    public Integer CreateGame(String authToken, String gameName) {
+    public Integer CreateGame(String authToken, String gameName) { //After my change this probably won't work for my memoryDAO.
         try {
             if (authDatabase.getAuth(authToken) == null) {
                 throw new RuntimeException("Not a valid authToken");
             }
-            int gameID = createGameID();
-            gameDatabase.createGame(new GameData(gameID, null, null, gameName,new ChessGame()));
-            return gameID;
+            return gameDatabase.createGame(new GameData(createGameID(), null, null, gameName,new ChessGame()));
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
