@@ -1,7 +1,9 @@
 package dataAccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
+import model.UserData;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -48,7 +50,18 @@ public class DBGameDAO implements GameDAO {
     }
 
     public GameData getGame(int gameID) {
-        return gameMap.get(gameID);
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM gamedata WHERE gameID = ?" )) {
+                preparedStatement.setInt(1, gameID);
+                var rs = preparedStatement.executeQuery();
+                String gameJson = rs.getString("game");
+                ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+                return new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game);
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Map<Integer, GameData> listGames() {

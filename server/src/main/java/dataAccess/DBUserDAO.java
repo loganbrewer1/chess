@@ -12,7 +12,7 @@ import java.util.Objects;
 public class DBUserDAO implements UserDAO {
     private final Map<String, UserData> users = new HashMap<>();
 
-   public void clearUsers() throws DataAccessException {
+   public void clearUsers() {
        try {
            var conn = DatabaseManager.getConnection();
            try (var preparedStatement = conn.prepareStatement("DELETE FROM userdata" )) {
