@@ -31,16 +31,52 @@ public class DatabaseManager {
         }
     }
 
+    private static final String[] createStatements = {
+        """
+    CREATE TABLE IF NOT EXISTS GameData (
+        gameID INT AUTO_INCREMENT,
+        whiteUsername VARCHAR(255) NOT NULL,
+        blackUsername VARCHAR(255) NOT NULL,
+        gameName VARCHAR(255) NOT NULL,
+        game TEXT NOT NULL,
+        PRIMARY KEY (gameID)
+    )
+    """,
+            """
+    CREATE TABLE IF NOT EXISTS UserData (
+        username VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        PRIMARY KEY (username)
+    )
+    """,
+
+            """
+    CREATE TABLE IF NOT EXISTS AuthData (
+        authToken VARCHAR(255) NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        PRIMARY KEY (authToken)
+    )
+    """
+    };
+
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+    public static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
+            conn.setCatalog(databaseName);
+            for (var createStatement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(createStatement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
