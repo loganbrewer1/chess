@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DBAuthDAO implements AuthDAO {
-    private final Map<String, String> authTokenMap = new HashMap<>();
 
     public void insertAuth(AuthData authData) {
         try {
@@ -60,19 +59,6 @@ public class DBAuthDAO implements AuthDAO {
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DBAuthDAO that = (DBAuthDAO) o;
-        return Objects.equals(authTokenMap, that.authTokenMap);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(authTokenMap);
     }
 }
 

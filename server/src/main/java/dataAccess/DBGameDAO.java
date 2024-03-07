@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DBGameDAO implements GameDAO {
-    private final Map<Integer, GameData> gameMap = new HashMap<>();
 
     public void clearGames() {
         try {
@@ -96,18 +95,5 @@ public class DBGameDAO implements GameDAO {
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DBGameDAO that = (DBGameDAO) o;
-        return Objects.equals(gameMap, that.gameMap);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(gameMap);
     }
 }
