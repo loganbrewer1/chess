@@ -15,9 +15,9 @@ public class Server {
     private final DeleteService deleteService;
 
     public Server() {
-        AuthDAO authDatabase = new MemoryAuthDAO();
-        GameDAO gameDatabase = new MemoryGameDAO();
-        UserDAO userDatabase = new MemoryUserDAO();
+        AuthDAO authDatabase = new DBAuthDAO();
+        GameDAO gameDatabase = new DBGameDAO();
+        UserDAO userDatabase = new DBUserDAO();
 
         this.userService = new UserService(userDatabase, authDatabase);
         this.gameService = new GameService(authDatabase, gameDatabase);

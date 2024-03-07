@@ -72,7 +72,7 @@ public class DBGameDAO implements GameDAO {
             try (var preparedStatement = conn.prepareStatement("SELECT * FROM gamedata" )) {
                 var rs = preparedStatement.executeQuery();
                 while (rs.next()) {
-                    String gameJson = rs.getString("game"); //TODO: Might need to check rs.next
+                    String gameJson = rs.getString("game");
                     ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
                     allGames.put(rs.getInt("gameID"),new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game));
                 }
@@ -84,7 +84,18 @@ public class DBGameDAO implements GameDAO {
     }
 
     public void updateGame(GameData updatedGame) {
-        gameMap.put(updatedGame.gameID(), updatedGame);
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("UPDATE gamedata SET whiteusername = ?, blackusername = ?, gameName = ?, and game = ? WHERE gameID = ?" )) {
+                preparedStatement.setString(1, updatedGame.whiteUsername());
+                preparedStatement.setString(2, updatedGame.blackUsername());
+                preparedStatement.setString(3, updatedGame.gameName());
+                preparedStatement.setString(4, new Gson().toJson(updatedGame.game()));
+                preparedStatement.executeQuery();
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
