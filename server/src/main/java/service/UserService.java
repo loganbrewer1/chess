@@ -7,6 +7,7 @@ import model.AuthData;
 import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Objects;
 
@@ -42,9 +43,10 @@ public class UserService {
             if (userDatabase.getUser(login.username()) == null) {
                 throw new RuntimeException("Could not find username");
             }
-            if (!Objects.equals(userDatabase.getUser(login.username()).password(), login.password())) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if (!encoder.matches(userDatabase.getUser(login.username()).password(), login.password())) {
                 throw new RuntimeException("Password does not match");
-            } //TODO: What about comparing password hash with the password?
+            } 
             String newAuthToken = CreateAuthToken();
             authDatabase.insertAuth(new AuthData(newAuthToken, login.username()));
             return new LoginResult(login.username(), newAuthToken);
