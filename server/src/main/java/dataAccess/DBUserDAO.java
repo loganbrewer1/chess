@@ -13,7 +13,14 @@ public class DBUserDAO implements UserDAO {
     private final Map<String, UserData> users = new HashMap<>();
 
    public void clearUsers() throws DataAccessException {
-        users.clear();
+       try {
+           var conn = DatabaseManager.getConnection();
+           try (var preparedStatement = conn.prepareStatement("DELETE FROM userData" )) {
+               preparedStatement.executeUpdate();
+           }
+       } catch (DataAccessException | SQLException e) {
+           throw new RuntimeException(e);
+       }
    }
 
     public void insertUser(UserData user) {
