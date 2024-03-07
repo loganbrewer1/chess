@@ -52,7 +52,14 @@ public class DBAuthDAO implements AuthDAO {
     }
 
     public void clearAuth() {
-        authTokenMap.clear();
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData" )) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
