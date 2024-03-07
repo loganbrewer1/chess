@@ -46,7 +46,7 @@ public class UserService {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             if (!encoder.matches(userDatabase.getUser(login.username()).password(), login.password())) {
                 throw new RuntimeException("Password does not match");
-            } 
+            }
             String newAuthToken = CreateAuthToken();
             authDatabase.insertAuth(new AuthData(newAuthToken, login.username()));
             return new LoginResult(login.username(), newAuthToken);

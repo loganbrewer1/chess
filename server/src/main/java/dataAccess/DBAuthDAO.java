@@ -12,7 +12,17 @@ public class DBAuthDAO implements AuthDAO {
     private final Map<String, String> authTokenMap = new HashMap<>();
 
     public void insertAuth(AuthData authData) {
-        authTokenMap.put(authData.authToken(), authData.username());
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToken, username) VALUES(?, ?)" )) {
+                preparedStatement.setString(1, authData.authToken());
+                preparedStatement.setString(2, authData.username());
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getAuth(String authToken) {
