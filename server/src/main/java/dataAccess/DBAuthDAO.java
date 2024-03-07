@@ -39,7 +39,16 @@ public class DBAuthDAO implements AuthDAO {
     }
 
     public void deleteAuth(String authToken) {
-        authTokenMap.remove(authToken);
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData WHERE authToken = ?" )) {
+                preparedStatement.setString(1, authToken);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void clearAuth() {
