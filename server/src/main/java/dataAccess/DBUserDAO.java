@@ -3,6 +3,7 @@ package dataAccess;
 import model.UserData;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,29 +16,33 @@ public class DBUserDAO implements UserDAO {
         users.clear();
    }
 
-    public void insertUser(UserData user) throws DataAccessException {
+    public void insertUser(UserData user) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String hashedPassword = encoder.encode(user.password());
 
-        var conn = DatabaseManager.getConnection();
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)" )) {
-            preparedStatement.setString(1, user.username());
-            preparedStatement.setString(2, hashedPassword);
-            preparedStatement.setString(3, user.email());
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)" )) {
+                preparedStatement.setString(1, user.username());
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, user.email());
 
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        var conn = DatabaseManager.getConnection();
-        try (var preparedStatement = conn.prepareStatement("SELECT * FROM UserData WHERE username = ?" )) {
-            preparedStatement.setString(1, username);
-            var rs = preparedStatement.executeQuery();
-            return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
-        } catch (SQLException e) {
+    public UserData getUser(String username) {
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM UserData WHERE username = ?" )) {
+                preparedStatement.setString(1, username);
+                var rs = preparedStatement.executeQuery();
+                return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+            }
+        } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
     }

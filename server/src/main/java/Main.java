@@ -13,7 +13,7 @@ public class Main {
         System.out.println("♕ 240 Chess server.Server: " + piece);
         try {
             DatabaseManager.createDatabase();
-            new DBUserDAO().insertUser(new UserData( "lbrewer4", "yowasup", "lbrewer4@byu.edu"));
+            new DBUserDAO().insertUser(new UserData( "jazzhands", "yowasup", "lbrewer4@byu.edu"));
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

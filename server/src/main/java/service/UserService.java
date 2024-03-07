@@ -42,9 +42,9 @@ public class UserService {
             if (userDatabase.getUser(login.username()) == null) {
                 throw new RuntimeException("Could not find username");
             }
-            if (!Objects.equals(userDatabase.getUser(login.username()).password(), login.password())) { //Intelleji suggested this instead of !=. Check here later if something does not work.
+            if (!Objects.equals(userDatabase.getUser(login.username()).password(), login.password())) {
                 throw new RuntimeException("Password does not match");
-            }
+            } //TODO: What about comparing password hash with the password?
             String newAuthToken = CreateAuthToken();
             authDatabase.insertAuth(new AuthData(newAuthToken, login.username()));
             return new LoginResult(login.username(), newAuthToken);

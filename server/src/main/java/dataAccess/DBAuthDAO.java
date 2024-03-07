@@ -1,6 +1,9 @@
 package dataAccess;
 import model.AuthData;
+import model.UserData;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -13,7 +16,16 @@ public class DBAuthDAO implements AuthDAO {
     }
 
     public String getAuth(String authToken) {
-        return authTokenMap.get(authToken);
+        try {
+            var conn = DatabaseManager.getConnection();
+            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM AuthData WHERE authToken = ?" )) {
+                preparedStatement.setString(1, authToken);
+                var rs = preparedStatement.executeQuery();
+                return rs.getString("authToken");
+            }
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void deleteAuth(String authToken) {
