@@ -10,11 +10,11 @@ import model.UserData;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class UserService {
     private final UserDAO userDatabase;
     private final AuthDAO authDatabase;
-    private int authTokenCounter = 1;
 
     public UserService(UserDAO userDatabase, AuthDAO authDatabase) {
         this.userDatabase = userDatabase;
@@ -66,6 +66,6 @@ public class UserService {
     }
 
     private String CreateAuthToken() {
-        return "myCoolAuthToken" + authTokenCounter++;
+        return UUID.randomUUID().toString();
     }
 }

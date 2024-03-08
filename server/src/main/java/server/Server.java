@@ -21,6 +21,12 @@ public class Server {
         GameDAO gameDatabase = new DBGameDAO();
         UserDAO userDatabase = new DBUserDAO();
 
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
         this.userService = new UserService(userDatabase, authDatabase);
         this.gameService = new GameService(authDatabase, gameDatabase);
         this.deleteService = new DeleteService(userDatabase,authDatabase,gameDatabase);
@@ -143,9 +149,13 @@ public class Server {
     }
 
     private Object DeleteHandler(Request req, Response res) {
-        deleteService.DeleteEverything();
-        res.status(200);
-        return new Gson().toJson(Map.of("message", "Data Deleted"));
+        try {
+            deleteService.DeleteEverything();
+            res.status(200);
+            return new Gson().toJson(Map.of("message", "Data Deleted"));
+        } catch (RuntimeException e) {
+            return new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+        }
     }
 
     public Object errorHandler(Exception e, Request req, Response res) {
