@@ -47,7 +47,6 @@ public class DBUserDAO implements UserDAO {
                 preparedStatement.setString(1, username);
                 var rs = preparedStatement.executeQuery();
                 if (rs.next()) {
-                    String passwordTest = rs.getString("password");
                     return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
                 }
                 else {

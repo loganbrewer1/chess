@@ -7,6 +7,8 @@ import service.DeleteService;
 import service.GameService;
 import service.UserService;
 import spark.*;
+
+import java.sql.SQLException;
 import java.util.Map;
 
 public class Server {

@@ -27,10 +27,15 @@ public class DBAuthDAO implements AuthDAO {
     public String getAuth(String authToken) {
         try {
             var conn = DatabaseManager.getConnection();
-            try (var preparedStatement = conn.prepareStatement("SELECT authToken FROM authdata WHERE authToken = ?" )) {
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM authdata WHERE authToken = ?" )) {
                 preparedStatement.setString(1, authToken);
                 var rs = preparedStatement.executeQuery();
-                return rs.getString("authToken");
+                if (rs.next()) {
+                    return rs.getString("username");
+                }
+                else {
+                    return null;
+                }
             }
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);

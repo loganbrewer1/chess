@@ -7,6 +7,7 @@ import dataAccess.GameDAO;
 import model.GameData;
 import model.ListGamesResult;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class GameService {

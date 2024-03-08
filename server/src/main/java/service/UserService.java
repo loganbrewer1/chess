@@ -44,7 +44,6 @@ public class UserService {
                 throw new RuntimeException("Could not find username");
             }
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String heyo = encoder.encode(login.password());
             if (!encoder.matches(login.password(), userDatabase.getUser(login.username()).password())) {
                 throw new RuntimeException("Password does not match");
             }
