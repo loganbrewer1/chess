@@ -70,7 +70,7 @@ public class DatabaseManager {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
-            conn.setCatalog(databaseName);
+            conn = getConnection();
             for (var createStatement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(createStatement)) {
                     preparedStatement.executeUpdate();
