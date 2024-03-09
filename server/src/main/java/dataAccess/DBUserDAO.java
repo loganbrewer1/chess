@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.UserData;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Connection;
