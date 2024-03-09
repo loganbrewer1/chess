@@ -40,7 +40,7 @@ public class DatabaseManager {
         gameName VARCHAR(255) NOT NULL,
         game TEXT NOT NULL,
         PRIMARY KEY (gameID)
-    );
+    )
     """,
             """
     CREATE TABLE IF NOT EXISTS UserData (
@@ -48,7 +48,7 @@ public class DatabaseManager {
         password VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         PRIMARY KEY (username)
-    );
+    )
     """,
 
             """
@@ -56,7 +56,7 @@ public class DatabaseManager {
         authToken VARCHAR(255) NOT NULL,
         username VARCHAR(255) NOT NULL,
         PRIMARY KEY (authToken)
-    );
+    )
     """
     };
 
@@ -71,11 +71,33 @@ public class DatabaseManager {
                 preparedStatement.executeUpdate();
             }
             conn = getConnection();
-            for (var createStatement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(createStatement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
+            var preparedStatement = conn.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS GameData (
+                    gameID INT AUTO_INCREMENT,
+                    whiteUsername VARCHAR(255),
+                    blackUsername VARCHAR(255),
+                    gameName VARCHAR(255) NOT NULL,
+                    game TEXT NOT NULL,
+                    PRIMARY KEY (gameID)) """
+
+            );
+            preparedStatement.executeUpdate();
+            preparedStatement = conn.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS UserData (
+                    username VARCHAR(255) NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    PRIMARY KEY (username))
+            """);
+            preparedStatement.executeUpdate();
+            preparedStatement = conn.prepareStatement(
+                    """
+            CREATE TABLE IF NOT EXISTS AuthData (
+            authToken VARCHAR(255) NOT NULL,
+            username VARCHAR(255) NOT NULL,
+            PRIMARY KEY (authToken))
+            """);
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
