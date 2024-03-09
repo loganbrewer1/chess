@@ -72,7 +72,7 @@ public class DatabaseManager {
             }
             conn = getConnection();
             var preparedStatement = conn.prepareStatement("""
-                    CREATE TABLE IF NOT EXISTS GameData (
+                    CREATE TABLE IF NOT EXISTS gamedata (
                     gameID INT AUTO_INCREMENT,
                     whiteUsername VARCHAR(255),
                     blackUsername VARCHAR(255),
@@ -83,7 +83,7 @@ public class DatabaseManager {
             );
             preparedStatement.executeUpdate();
             preparedStatement = conn.prepareStatement("""
-                    CREATE TABLE IF NOT EXISTS UserData (
+                    CREATE TABLE IF NOT EXISTS userdata (
                     username VARCHAR(255) NOT NULL,
                     password VARCHAR(255) NOT NULL,
                     email VARCHAR(255) NOT NULL,
@@ -92,7 +92,7 @@ public class DatabaseManager {
             preparedStatement.executeUpdate();
             preparedStatement = conn.prepareStatement(
                     """
-            CREATE TABLE IF NOT EXISTS AuthData (
+            CREATE TABLE IF NOT EXISTS authdata (
             authToken VARCHAR(255) NOT NULL,
             username VARCHAR(255) NOT NULL,
             PRIMARY KEY (authToken))
