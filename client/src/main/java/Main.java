@@ -3,6 +3,7 @@ import chess.*;
 import java.util.Objects;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
+import static ui.ServerFacade.Register;
 
 
 public class Main {
@@ -18,9 +19,16 @@ public class Main {
         while (stillPlaying) {
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
-            switch (line) {
+            var args = line.split(" ");
+            switch (args[0]) {
                 case "help" -> PreLoginHelp();
-                case "register" -> System.out.println("Here are instructions on registering");
+                case "register" -> {
+                    try {
+                        Register(args);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 case "login" -> System.out.println("This is how you login");
                 case "quit" -> stillPlaying = false;
                 case null, default -> System.out.println("Not a valid command. Type Help for a list of commands.");
@@ -37,4 +45,5 @@ public class Main {
         System.out.println(blue + "quit" + grey + " - to leave");
         System.out.print(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE + "\n>>>");
     }
+
 }

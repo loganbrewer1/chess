@@ -22,7 +22,7 @@ public class Main {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-//        Server myServer = new Server();
-//        myServer.run(8080);
+        Server myServer = new Server();
+        myServer.run(8080);
     }
 }
