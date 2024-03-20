@@ -3,8 +3,7 @@ import chess.*;
 import java.util.Objects;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
-import static ui.ServerFacade.Login;
-import static ui.ServerFacade.Register;
+import static ui.ServerFacade.*;
 
 
 public class Main {
@@ -32,8 +31,8 @@ public class Main {
                 }
                 case "login" -> {
                     try {
-                        Login(args);
-                        PostLogin(args[1]);
+                        String authToken = Login(args);
+                        PostLogin(args[1], authToken);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -42,10 +41,9 @@ public class Main {
                 case null, default -> System.out.println("Not a valid command. Type Help for a list of commands.");
             }
         }
-
     }
 
-    private static void PostLogin(String username) {
+    private static void PostLogin(String username, String authToken) {
         System.out.println(ERASE_SCREEN + "Welcome " + username + " to Chess Mania! Type help for a list of commands.");
         boolean stillPlaying = true;
         while (stillPlaying) {
@@ -53,9 +51,27 @@ public class Main {
             String line = scanner.nextLine();
             var args = line.split(" ");
             switch (args[0]) {
-                case "create" -> System.out.println("Create a game dude");
-                case "list" -> System.out.println("List the games");
-                case "join" -> System.out.println("Join a game dude");
+                case "create" -> {
+                    try {
+                        CreateGame(args, authToken);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                case "list" -> {
+                    try {
+                        ListGames(authToken);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                case "join" -> {
+                    try {
+                        JoinGame(args, authToken);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 case "observe" -> System.out.println("Observe a game dude");
                 case "logout" -> stillPlaying = false; //Don't forget to call logout API
                 case "quit" -> System.exit(0);
