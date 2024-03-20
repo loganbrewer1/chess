@@ -53,10 +53,14 @@ public class Main {
             String line = scanner.nextLine();
             var args = line.split(" ");
             switch (args[0]) {
-                case "help" -> PostLoginHelp();
+                case "create" -> System.out.println("Create a game dude");
+                case "list" -> System.out.println("List the games");
+                case "join" -> System.out.println("Join a game dude");
+                case "observe" -> System.out.println("Observe a game dude");
                 case "logout" -> stillPlaying = false; //Don't forget to call logout API
                 case "quit" -> System.exit(0);
-                case null, default -> System.out.println("Not a valid command. Type Help for a list of commands.");
+                case "help" -> PostLoginHelp();
+                case null, default -> System.out.println("Not a valid command. Type help for a list of commands.");
             }
         }
     }
