@@ -96,7 +96,7 @@ public class ServerFacade {
         http.addRequestProperty("Authorization", authToken);
         Map<String, String> body;
 
-        if (args[2] == null) {
+        if (args.length < 3) {
             body = Map.of("gameID", args[1]);
         } else  {
             body = Map.of("gameID", args[1], "playerColor", args[2]);

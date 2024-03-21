@@ -1,6 +1,5 @@
 import chess.*;
 
-import java.util.Objects;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 import static ui.ServerFacade.*;
@@ -55,7 +54,7 @@ public class Main {
     }
 
     private static void PostLogin(String username, String authToken) {
-        System.out.println(ERASE_SCREEN + "Welcome " + username + " to Chess Mania! Type help for a list of commands.");
+        System.out.print(ERASE_SCREEN + "Welcome " + username + " to Chess Mania! Type help for a list of commands.");
         boolean stillPlaying = true;
         while (stillPlaying) {
             System.out.print("\n>>> ");
@@ -116,7 +115,7 @@ public class Main {
                 }
                 case "quit" -> System.exit(0);
                 case "help" -> PostLoginHelp();
-                case null, default -> System.out.println("Not a valid command. Type help for a list of commands.");
+                case null, default -> System.out.print("Not a valid command. Type help for a list of commands.");
             }
         }
     }
@@ -133,12 +132,13 @@ public class Main {
     private static void PostLoginHelp() {
         String blue = SET_TEXT_COLOR_BLUE;
         String grey = SET_TEXT_COLOR_LIGHT_GREY;
+        System.out.print(ERASE_SCREEN);
         System.out.println(blue + "create <NAME>" + grey + " - a chess game");
         System.out.println(blue + "list" + grey + " - show all available games");
         System.out.println(blue + "join <ID> [WHITE|BLACK|<empty>]" + grey + " - a chess game");
         System.out.println(blue + "observe <ID>" + grey + " - a chess game");
         System.out.println(blue + "logout" + grey + " - when you are done");
         System.out.println(blue + "quit" + grey + " - playing chess");
-        System.out.println(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE);
+        System.out.print(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE);
     }
 }
