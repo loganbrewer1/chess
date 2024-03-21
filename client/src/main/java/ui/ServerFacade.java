@@ -31,7 +31,6 @@ public class ServerFacade {
     }
 
     public static String Login(String[] args) throws Exception {
-        String authToken;
         URI uri = new URI("http://localhost:8080/session");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod("POST");
@@ -113,6 +112,22 @@ public class ServerFacade {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
         }
-        System.out.println("Game named " + args[1] + " created.");
+        System.out.println("Joined the game with ID  " + args[1] + " .");
+    }
+
+    public static void Logout(String authToken) throws Exception {
+        URI uri = new URI("http://localhost:8080/session");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("DELETE");
+        http.addRequestProperty("Content-Type", "application/json");
+        http.addRequestProperty("Authorization", authToken);
+
+        http.connect();
+
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
+        }
+        System.out.println("You have successfully logged out");
     }
 }
