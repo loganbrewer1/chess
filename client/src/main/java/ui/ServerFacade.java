@@ -9,7 +9,7 @@ import java.net.URI;
 import java.util.Map;
 
 public class ServerFacade {
-    public static void Register(String[] args) throws Exception {
+    public static String Register(String[] args) throws Exception {
         URI uri = new URI("http://localhost:8080/user");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod("POST");
@@ -25,9 +25,8 @@ public class ServerFacade {
 
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
+            return new Gson().fromJson(inputStreamReader, Map.class).get("authToken").toString();
         }
-        System.out.println("Finished registering");
     }
 
     public static String Login(String[] args) throws Exception {
@@ -50,7 +49,7 @@ public class ServerFacade {
         }
     }
 
-    public static void CreateGame(String[] args, String authToken) throws Exception {
+    public static String CreateGame(String[] args, String authToken) throws Exception {
         URI uri = new URI("http://localhost:8080/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod("POST");
@@ -68,8 +67,9 @@ public class ServerFacade {
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
+            System.out.println("Game named " + args[1] + "created.");
+            return new Gson().fromJson(inputStreamReader, Map.class).get("gameID").toString();
         }
-        System.out.println("Game named " + args[1] + " created.");
     }
     public static void ListGames(String authToken) throws Exception {
         URI uri = new URI("http://localhost:8080/game");

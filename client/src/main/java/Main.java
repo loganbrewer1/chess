@@ -29,7 +29,8 @@ public class Main {
                         if (args.length != 4) {
                             System.out.println("Too many or too few fields were given. Try again.");
                         } else {
-                            Register(args);
+                            String authToken = Register(args);
+                            PostLogin(args[1], authToken);
                         }
                     } catch (Exception e) {
                         if (e.getMessage().contains("400")) {
