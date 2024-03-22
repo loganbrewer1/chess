@@ -59,7 +59,7 @@ public class Main {
         System.out.print(ERASE_SCREEN + "Welcome " + username + " to Chess Mania! Type help for a list of commands.");
         boolean stillPlaying = true;
         while (stillPlaying) {
-            System.out.print("\n>>> ");
+            System.out.print( SET_BG_COLOR_DARK_GREY + "\n>>> ");
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
             var args = line.split(" ");
