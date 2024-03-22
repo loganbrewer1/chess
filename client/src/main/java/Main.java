@@ -1,6 +1,8 @@
 import chess.*;
 
 import java.util.Scanner;
+import ui.BoardUI;
+import static ui.BoardUI.*;
 import static ui.EscapeSequences.*;
 import static ui.ServerFacade.*;
 
@@ -89,6 +91,11 @@ public class Main {
                 case "join", "observe" -> {
                     try {
                         JoinGame(args, authToken);
+                        ChessBoard newBoard = new ChessBoard();
+                        newBoard.resetBoard();
+                        PrintBoardWhite(newBoard);
+                        System.out.println("\n");
+                        PrintBoardBlack(newBoard);
                     } catch (Exception e) {
                         if (e.getMessage().contains("400")) {
                             System.out.println("Something in your join request was off. Try double checking the gameID.");
@@ -98,6 +105,8 @@ public class Main {
                             System.out.println("The player color is already taken");
                         } else if (e.getMessage().contains("500")) {
                             System.out.println("There was a server error.");
+                        } else {
+                            System.out.println(e.getMessage());
                         }
                     }
                 }
