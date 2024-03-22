@@ -60,12 +60,14 @@ public class ServerFacadeTests {
         String[] args = new String[] {"login", "Michael", "password"};
         String auth = null;
         try {
-            ServerFacade.Register(new String[] {"register", "Michael", "password", "email"});
+            auth = ServerFacade.Register(new String[] {"register", "Michael", "password", "email"});
+            ServerFacade.Logout(auth);
             auth = ServerFacade.Login(args);
+            Assertions.assertNotNull(auth);
         } catch (Exception e) {
             Assertions.assertFalse(false);
         }
-        Assertions.assertNotNull(auth);
+
     }
 
     @Test
