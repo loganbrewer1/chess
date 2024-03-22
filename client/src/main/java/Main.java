@@ -26,7 +26,11 @@ public class Main {
                 case "help" -> PreLoginHelp();
                 case "register" -> {
                     try {
-                        Register(args);
+                        if (args.length != 4) {
+                            System.out.println("Too many or too few fields were given. Try again.");
+                        } else {
+                            Register(args);
+                        }
                     } catch (Exception e) {
                         if (e.getMessage().contains("400")) {
                             System.out.println("Something in your register request was off. Try double checking your input.");
@@ -39,8 +43,12 @@ public class Main {
                 }
                 case "login" -> {
                     try {
-                        String authToken = Login(args);
-                        PostLogin(args[1], authToken);
+                        if (args.length != 3) {
+                            System.out.println("Too many or too few fields were given. Try again.");
+                        } else {
+                            String authToken = Login(args);
+                            PostLogin(args[1], authToken);
+                        }
                     } catch (Exception e) {
                         if (e.getMessage().contains("401")) {
                             System.out.println("Wrong username and password");
@@ -59,14 +67,18 @@ public class Main {
         System.out.print(ERASE_SCREEN + "Welcome " + username + " to Chess Mania! Type help for a list of commands.");
         boolean stillPlaying = true;
         while (stillPlaying) {
-            System.out.print( SET_BG_COLOR_DARK_GREY + "\n>>> ");
+            System.out.print(RESET_BG_COLOR + "\n>>> ");
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
             var args = line.split(" ");
             switch (args[0]) {
                 case "create" -> {
                     try {
-                        CreateGame(args, authToken);
+                        if (args.length != 2) {
+                            System.out.println("Too many or too few fields were given. Try again.");
+                        } else {
+                            CreateGame(args, authToken);
+                        }
                     } catch (Exception e) {
                         if (e.getMessage().contains("400")) {
                             System.out.println("Something in your join request was off. Try double checking the gameID.");
@@ -90,12 +102,16 @@ public class Main {
                 }
                 case "join", "observe" -> {
                     try {
-                        JoinGame(args, authToken);
-                        ChessBoard newBoard = new ChessBoard();
-                        newBoard.resetBoard();
-                        PrintBoardWhite(newBoard);
-                        System.out.println("\n");
-                        PrintBoardBlack(newBoard);
+                        if (args.length == 2 || args.length == 3) {
+                            JoinGame(args, authToken);
+                            ChessBoard newBoard = new ChessBoard();
+                            newBoard.resetBoard();
+                            PrintBoardWhite(newBoard);
+                            System.out.println("\n");
+                            PrintBoardBlack(newBoard);
+                        } else {
+                            System.out.println("Too many or too few fields were given. Try again.");
+                        }
                     } catch (Exception e) {
                         if (e.getMessage().contains("400")) {
                             System.out.println("Something in your join request was off. Try double checking the gameID.");

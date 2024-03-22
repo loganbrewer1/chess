@@ -10,10 +10,16 @@ import static ui.EscapeSequences.*;
 public class BoardUI {
     public static void PrintBoardBlack(ChessBoard board) {
         System.out.print(SET_BG_COLOR_BLACK);
-        String[] letters = new String[]{"","H","G","F","E","D","C","B","A", ""};
+        String[] letters = new String[]{"","H","G","F","E","D","C","B","A",""};
         String[] numbers = new String[]{"8","7","6","5","4","3","2","1"};
+        Integer counter = 0;
         for (String letter : letters) {
-            System.out.print(letter + "   ");
+            counter++;
+            if (counter%3 == 0) {
+                System.out.print(letter + "  ");
+            } else {
+                System.out.print(letter + "   ");
+            }
         }
         System.out.println();
         for (int i = 7; i >= 0; i--) {
@@ -27,20 +33,33 @@ public class BoardUI {
                 PrintPieceType(board, i, j);
             }
             System.out.print(SET_BG_COLOR_BLACK);
-            System.out.print(EMPTY + numbers[i]);
+            System.out.print(" " + numbers[i]);
             System.out.println();
         }
+        counter = 0;
         for (String letter : letters) {
-            System.out.print(letter + "   ");
+            counter++;
+            if (counter%3 == 0) {
+                System.out.print(letter + "  ");
+            } else {
+                System.out.print(letter + "   ");
+            }
         }
+        System.out.print(RESET_BG_COLOR);
     }
 
     public static void PrintBoardWhite(ChessBoard board) {
         System.out.print(SET_BG_COLOR_BLACK);
-        String[] letters = new String[]{"A","B","C","D","E","F","G","H"};
+        String[] letters = new String[]{"","A","B","C","D","E","F","G","H",""};
         String[] numbers = new String[]{"8","7","6","5","4","3","2","1"};
+        Integer counter = 0;
         for (String letter : letters) {
-            System.out.print(letter + "   ");
+            counter++;
+            if (counter%3 == 0) {
+                System.out.print(letter + "  ");
+            } else {
+                System.out.print(letter + "   ");
+            }
         }
         System.out.println();
         for (int i = 0; i <= 7; i++) {
@@ -54,13 +73,19 @@ public class BoardUI {
                 PrintPieceType(board, i, j);
             }
             System.out.print(SET_BG_COLOR_BLACK);
-            System.out.print(EMPTY + numbers[i]);
+            System.out.print(" " + numbers[i]);
             System.out.println();
         }
+        counter = 0;
         for (String letter : letters) {
-            System.out.print(letter + "   ");
+            counter++;
+            if (counter%3 == 0) {
+                System.out.print(letter + "  ");
+            } else {
+                System.out.print(letter + "   ");
+            }
         }
-        System.out.println();
+        System.out.println(RESET_BG_COLOR);
     }
 
     private static void PrintPieceType(ChessBoard board, int i, int j) {
