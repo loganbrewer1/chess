@@ -1,11 +1,17 @@
 package ui;
 
 import com.google.gson.Gson;
+import model.GameData;
+import model.ListGamesResult;
+import model.ListOfGameData;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
@@ -82,9 +88,18 @@ public class ServerFacade {
 
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
+            ListOfGameData gameDataList = new Gson().fromJson(inputStreamReader, ListOfGameData.class);
+            List<ListGamesResult> gameList = gameDataList.games();
+
+            System.out.println("Here are all your games :)");
+            for (ListGamesResult game : gameList) {
+                System.out.println("Game ID: " + game.gameID());
+                System.out.println("Game Name: " + game.gameName());
+                System.out.println("White Username: " + (game.whiteUsername() != null ? game.whiteUsername() : "Not taken"));
+                System.out.println("Black Username: " + (game.blackUsername() != null ? game.blackUsername() : "Not taken"));
+                System.out.println();
+            }
         }
-        System.out.println("Here are all your games :)");
     }
 
     public static void JoinGame(String[] args, String authToken) throws Exception {
