@@ -114,7 +114,15 @@ public class Server {
         try {
             String authToken = req.headers("Authorization");
             res.type("application/json");
-            return new Gson().toJson(gameService.ListGames(authToken));
+            Map gameIDMap = new Gson().fromJson(req.body(), Map.class);
+            if (gameIDMap == null) {
+                return new Gson().toJson(gameService.ListGames(authToken));
+            } else {
+                String checkGameID = gameIDMap.get("gameID").toString();
+                int gameId = Integer.parseInt(checkGameID);
+                return new Gson().toJson(gameService.getGame(authToken, gameId));
+            }
+
         } catch (RuntimeException e) {
             if (e.getMessage().equals("Not a valid authToken")) {
                 res.status(401);

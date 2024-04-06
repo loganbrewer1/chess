@@ -1,6 +1,8 @@
 import chess.*;
 
 import java.util.Scanner;
+
+import model.GameData;
 import ui.BoardUI;
 import static ui.BoardUI.*;
 import static ui.EscapeSequences.*;
@@ -105,11 +107,7 @@ public class Main {
                     try {
                         if (args.length == 2 || args.length == 3) {
                             JoinGame(args, authToken);
-                            ChessBoard newBoard = new ChessBoard();
-                            newBoard.resetBoard();
-                            PrintBoardWhite(newBoard);
-                            System.out.println("\n");
-                            PrintBoardBlack(newBoard);
+                            PostJoinGame(args, authToken);
                         } else {
                             System.out.println("Too many or too few fields were given. Try again.");
                         }
@@ -143,6 +141,17 @@ public class Main {
                 case "help" -> PostLoginHelp();
                 case null, default -> System.out.print("Not a valid command. Type help for a list of commands.");
             }
+        }
+    }
+
+    private static void PostJoinGame(String[] args, String authToken) {
+        try {
+            GameData gameData = GetGame(authToken, args[1]);
+            PrintBoardWhite(gameData.game().getBoard());
+            System.out.println("\n");
+            PrintBoardBlack(gameData.game().getBoard());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,4 +1,3 @@
-/*
 package passoffTests.serverTests;
 
 import chess.ChessGame;
@@ -724,5 +723,3 @@ public class WebSocketTests {
     }
 
 }
-
- */

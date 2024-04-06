@@ -7,6 +7,7 @@ import model.ListOfGameData;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -73,7 +74,7 @@ public class ServerFacade {
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
-            System.out.println("Game named " + args[1] + "created.");
+            System.out.println("Game named " + args[1] + " created.");
             return new Gson().fromJson(inputStreamReader, Map.class).get("gameID").toString();
         }
     }
@@ -100,6 +101,34 @@ public class ServerFacade {
                 System.out.println();
             }
         }
+    }
+
+    public static GameData GetGame(String authToken, String gameID) throws Exception {
+        URI uri = new URI("http://localhost:8080/game");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setDoOutput(true);
+        http.addRequestProperty("Content-Type", "application/json");
+        http.addRequestProperty("Authorization", authToken);
+        http.setRequestMethod("GET");
+
+        var body = Map.of("gameID", gameID);
+        try (var outputStream = http.getOutputStream()) {
+            var jsonBody = new Gson().toJson(body);
+            outputStream.write(jsonBody.getBytes());
+        }
+
+
+        http.connect();
+
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            return new Gson().fromJson(inputStreamReader, GameData.class);
+        }
+
+//        try (InputStream respBody = http.getInputStream()) {
+//            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+//            return new Gson().fromJson(inputStreamReader, Map.class).get("gameID").toString();
+//        }
     }
 
     public static void JoinGame(String[] args, String authToken) throws Exception {

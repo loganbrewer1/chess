@@ -21,6 +21,23 @@ public class GameService {
         this.gameDatabase = gameDatabase;
     }
 
+    public GameData getGame(String authToken, int gameID) {
+        try {
+            if (authDatabase.getAuth(authToken) == null) {
+                throw new RuntimeException("Not a valid authToken");
+            }
+
+            GameData gameData = gameDatabase.getGame(gameID);
+            if (gameData == null) {
+                throw new RuntimeException("Game not found");
+            }
+
+            return gameData;
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public Map<String, List<ListGamesResult>> ListGames(String authToken) {
         try {
             if (authDatabase.getAuth(authToken) == null) {
@@ -93,4 +110,5 @@ public class GameService {
     public int hashCode() {
         return Objects.hash(authDatabase, gameDatabase, nextGameID);
     }
+
 }
