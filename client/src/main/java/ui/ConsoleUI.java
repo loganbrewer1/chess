@@ -141,17 +141,7 @@ public class ConsoleUI {
     private static void PostJoinGame(String[] args, String authToken) {
         try {
             GameData gameData = GetGame(authToken, args[1]);
-            if (args.length == 3) {
-                if (Objects.equals(args[2], "WHITE")) {
-                    PrintBoardWhite(gameData.game().getBoard());
-                } else if (Objects.equals(args[2], "BLACK")) {
-                    PrintBoardBlack(gameData.game().getBoard());
-                } else {
-                    System.out.println(args[2] + " is not a Chess player color. Why would you input that?");
-                }
-            } else {
-                PrintBoardWhite(gameData.game().getBoard());
-            }
+            PrintRespectiveBoard(args, gameData);
             System.out.println("You successfully joined the match. Type help for a list of commands.");
             boolean stillPlaying = true;
             while (stillPlaying) {
@@ -160,7 +150,7 @@ public class ConsoleUI {
                 String line = scanner.nextLine();
                 var answerArray = line.split(" ");
                 switch (answerArray[0]) {
-                    case "redraw" -> System.out.println("redraw the board");
+                    case "redraw" -> PrintRespectiveBoard(args, GetGame(authToken, args[1]));
                     case "leave" -> stillPlaying = false;
                     case "move" -> System.out.println("Input your move");
                     case "resign" -> System.out.println("You have resigned");
@@ -170,6 +160,21 @@ public class ConsoleUI {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void PrintRespectiveBoard(String[] args, GameData gameData) {
+        System.out.println(ERASE_SCREEN);
+        if (args.length == 3) {
+            if (Objects.equals(args[2], "WHITE")) {
+                PrintBoardWhite(gameData.game().getBoard());
+            } else if (Objects.equals(args[2], "BLACK")) {
+                PrintBoardBlack(gameData.game().getBoard());
+            } else {
+                System.out.println(args[2] + " is not a Chess player color. What is wrong with you??");
+            }
+        } else {
+            PrintBoardWhite(gameData.game().getBoard());
         }
     }
 
@@ -201,9 +206,9 @@ public class ConsoleUI {
         System.out.print(ERASE_SCREEN);
         System.out.println(blue + "redraw " + grey + " - Chess Board");
         System.out.println(blue + "leave" + grey + " - the chess match");
-        System.out.println(blue + "move" + grey + " - make your next move");
+        System.out.println(blue + "move <START POSITION> <END POSITION>" + grey + " - make your next move (eg. move e2 e4)");
         System.out.println(blue + "resign" + grey + " - the chess match");
-        System.out.println(blue + "highlight" + grey + " - legal Moves");
+        System.out.println(blue + "highlight <PIECE POSITION>" + grey + " - legal moves (eg. highlight e2)");
         System.out.print(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE);
     }
 }

@@ -151,7 +151,7 @@ public class ServerFacade {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
         }
-        System.out.println("Joined the game with ID  " + args[1] + " .");
+        System.out.println("Joined the game with ID " + args[1] + ".");
     }
 
     public static void Logout(String authToken) throws Exception {
