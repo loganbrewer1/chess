@@ -2,6 +2,7 @@ package ui;
 
 import model.GameData;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.BoardUI.PrintBoardBlack;
@@ -140,9 +141,33 @@ public class ConsoleUI {
     private static void PostJoinGame(String[] args, String authToken) {
         try {
             GameData gameData = GetGame(authToken, args[1]);
-            PrintBoardWhite(gameData.game().getBoard());
-            System.out.println("\n");
-            PrintBoardBlack(gameData.game().getBoard());
+            if (args.length == 3) {
+                if (Objects.equals(args[2], "WHITE")) {
+                    PrintBoardWhite(gameData.game().getBoard());
+                } else if (Objects.equals(args[2], "BLACK")) {
+                    PrintBoardBlack(gameData.game().getBoard());
+                } else {
+                    System.out.println(args[2] + " is not a Chess player color. Why would you input that?");
+                }
+            } else {
+                PrintBoardWhite(gameData.game().getBoard());
+            }
+            System.out.println("You successfully joined the match. Type help for a list of commands.");
+            boolean stillPlaying = true;
+            while (stillPlaying) {
+                System.out.print("\n>>> ");
+                Scanner scanner = new Scanner(System.in);
+                String line = scanner.nextLine();
+                var answerArray = line.split(" ");
+                switch (answerArray[0]) {
+                    case "redraw" -> System.out.println("redraw the board");
+                    case "leave" -> stillPlaying = false;
+                    case "move" -> System.out.println("Input your move");
+                    case "resign" -> System.out.println("You have resigned");
+                    case "highlight" -> System.out.println("Here are your highlighted moves");
+                    case "help" -> PostJoinHelp();
+                }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -167,6 +192,18 @@ public class ConsoleUI {
         System.out.println(blue + "observe <ID>" + grey + " - a chess game");
         System.out.println(blue + "logout" + grey + " - when you are done");
         System.out.println(blue + "quit" + grey + " - playing chess");
+        System.out.print(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void PostJoinHelp() {
+        String blue = SET_TEXT_COLOR_BLUE;
+        String grey = SET_TEXT_COLOR_LIGHT_GREY;
+        System.out.print(ERASE_SCREEN);
+        System.out.println(blue + "redraw " + grey + " - Chess Board");
+        System.out.println(blue + "leave" + grey + " - the chess match");
+        System.out.println(blue + "move" + grey + " - make your next move");
+        System.out.println(blue + "resign" + grey + " - the chess match");
+        System.out.println(blue + "highlight" + grey + " - legal Moves");
         System.out.print(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE);
     }
 }
