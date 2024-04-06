@@ -42,6 +42,7 @@ public class Server {
         Spark.post("/session", this::LoginHandler);
         Spark.delete("/session", this::LogoutHandler);
         Spark.get("/game", this::ListGamesHandler);
+        Spark.post("/singleGame", this::SingleGameHandler);
         Spark.post("/game", this::CreateGameHandler);
         Spark.put("/game", this::JoinGameHandler);
         Spark.delete("/db", this::DeleteHandler);
@@ -53,6 +54,24 @@ public class Server {
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private Object SingleGameHandler(Request req, Response res) {
+        try {
+            String authToken = req.headers("Authorization");
+            res.type("application/json");
+            Map gameIDMap = new Gson().fromJson(req.body(), Map.class);
+
+            String checkGameID = gameIDMap.get("gameID").toString();
+            int gameId = Integer.parseInt(checkGameID);
+            return new Gson().toJson(gameService.getGame(authToken, gameId));
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("Not a valid authToken")) {
+                res.status(401);
+            }
+            return new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+        }
+
     }
 
     private Object RegisterHandler(Request req, Response res) {
@@ -114,15 +133,7 @@ public class Server {
         try {
             String authToken = req.headers("Authorization");
             res.type("application/json");
-            Map gameIDMap = new Gson().fromJson(req.body(), Map.class);
-            if (gameIDMap == null) {
-                return new Gson().toJson(gameService.ListGames(authToken));
-            } else {
-                String checkGameID = gameIDMap.get("gameID").toString();
-                int gameId = Integer.parseInt(checkGameID);
-                return new Gson().toJson(gameService.getGame(authToken, gameId));
-            }
-
+            return new Gson().toJson(gameService.ListGames(authToken));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("Not a valid authToken")) {
                 res.status(401);

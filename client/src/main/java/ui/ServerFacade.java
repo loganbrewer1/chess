@@ -104,12 +104,12 @@ public class ServerFacade {
     }
 
     public static GameData GetGame(String authToken, String gameID) throws Exception {
-        URI uri = new URI("http://localhost:8080/game");
+        URI uri = new URI("http://localhost:8080/singleGame");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setDoOutput(true);
         http.addRequestProperty("Content-Type", "application/json");
         http.addRequestProperty("Authorization", authToken);
-        http.setRequestMethod("GET");
+        http.setRequestMethod("POST");
 
         var body = Map.of("gameID", gameID);
         try (var outputStream = http.getOutputStream()) {
@@ -124,11 +124,6 @@ public class ServerFacade {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             return new Gson().fromJson(inputStreamReader, GameData.class);
         }
-
-//        try (InputStream respBody = http.getInputStream()) {
-//            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-//            return new Gson().fromJson(inputStreamReader, Map.class).get("gameID").toString();
-//        }
     }
 
     public static void JoinGame(String[] args, String authToken) throws Exception {
