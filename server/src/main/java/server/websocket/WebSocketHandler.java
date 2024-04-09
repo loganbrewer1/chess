@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import spark.Spark;
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
@@ -34,23 +36,51 @@ public class WebSocketHandler {
 
     public void handleJoinPlayer(Session session, String message) {
         JoinPlayer command = new Gson().fromJson(message, JoinPlayer.class);
-        String playerName = command.getVisitorName();
-        connections.add(playerName, session);
 
-        //Add logic for LOAD_GAME. What does the game state mean? 
+        if (command == null) {
+            try {
+                session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, command not valid.").getErrorMessage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            String playerName = command.getVisitorName();
+            connections.add(playerName, session);
 
-        var messageToSend = String.format(playerName + " joined the game as the " + command.getPlayerColor() + " player.");
-        var notification = new NotificationMessage(messageToSend);
+            var messageToSend = String.format(playerName + " joined the game as the " + command.getPlayerColor() + " player.");
+            var notification = new NotificationMessage(messageToSend);
 
-        try {
-            connections.broadcast(playerName, notification);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            try {
+                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").toString());
+                connections.broadcast(playerName, notification);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public void handleJoinObserver(Session session, String message) {
         JoinObserver command = new Gson().fromJson(message, JoinObserver.class);
+        if (command == null) {
+            try {
+                session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, command not valid.").getErrorMessage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            String playerName = command.getVisitorName();
+            connections.add(playerName, session);
+
+            var messageToSend = String.format(playerName + " joined the game as an observer.");
+            var notification = new NotificationMessage(messageToSend);
+
+            try {
+                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").toString());
+                connections.broadcast(playerName, notification);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void handleMakeMove(Session session, String message) {
