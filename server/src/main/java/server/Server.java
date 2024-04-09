@@ -3,12 +3,12 @@ package server;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.*;
+import server.websocket.WebSocketHandler;
 import service.DeleteService;
 import service.GameService;
 import service.UserService;
 import spark.*;
 
-import java.sql.SQLException;
 import java.util.Map;
 
 public class Server {
@@ -37,6 +37,9 @@ public class Server {
 
         Spark.staticFiles.location("web");
         // Register your endpoints and handle exceptions here.
+
+        Spark.get("/echo/:msg", (req, res) -> "HTTP response: " + req.params(":msg"));
+        Spark.webSocket("/connect", WebSocketHandler.class);
 
         Spark.post("/user", this::RegisterHandler);
         Spark.post("/session", this::LoginHandler);

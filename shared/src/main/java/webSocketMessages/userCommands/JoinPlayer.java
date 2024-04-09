@@ -5,10 +5,12 @@ import chess.ChessGame;
 public class JoinPlayer extends UserGameCommand {
     private final Integer gameID;
     private final ChessGame.TeamColor playerColor;
-    public JoinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor) {
+    private final String visitorName;
+    public JoinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor, String visitorName) {
         super(authToken);
         this.gameID = gameID;
         this.playerColor = playerColor;
+        this.visitorName = visitorName;
         this.commandType = CommandType.JOIN_OBSERVER;
     }
 
@@ -18,5 +20,9 @@ public class JoinPlayer extends UserGameCommand {
 
     public ChessGame.TeamColor getPlayerColor() {
         return playerColor;
+    }
+
+    public String getVisitorName() {
+        return visitorName;
     }
 }
