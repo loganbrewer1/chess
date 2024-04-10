@@ -44,7 +44,7 @@ public class WebSocketHandler {
 
     public void handleJoinPlayer(Session session, String message) {
         JoinPlayer command = new Gson().fromJson(message, JoinPlayer.class);
-
+        //TODO:Replace this with a check on gameID and authToken existing.
         if (command == null) {
             try {
                 session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, command not valid.").getErrorMessage());
@@ -69,6 +69,7 @@ public class WebSocketHandler {
 
     public void handleJoinObserver(Session session, String message) {
         JoinObserver command = new Gson().fromJson(message, JoinObserver.class);
+        //TODO:Replace this with a check on gameID and authToken existing.
         if (command == null) {
             try {
                 session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, command not valid.").getErrorMessage());
@@ -93,6 +94,7 @@ public class WebSocketHandler {
 
     public void handleMakeMove(Session session, String message) {
         MakeMove command = new Gson().fromJson(message, MakeMove.class);
+        //TODO:Replace this with a check on gameID and authToken existing.
         if (command == null) {
             try {
                 session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, command not valid.").getErrorMessage());
@@ -183,6 +185,7 @@ public class WebSocketHandler {
     }
 
     public void handleLeave(Session session, String message) {
+        //TODO:Add a check on gameID and authToken existing.
         Leave command = new Gson().fromJson(message, Leave.class);
         GameData gameData = new DBGameDAO().getGame(command.getGameID());
         String playerName = command.getVisitorName();
@@ -205,6 +208,7 @@ public class WebSocketHandler {
     }
 
     public void handleResign(Session session, String message) {
+        //TODO:Add a check on gameID and authToken existing.
         Resign command = new Gson().fromJson(message, Resign.class);
         String playerName = command.getVisitorName();
 

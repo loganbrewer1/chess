@@ -178,6 +178,17 @@ public class ConsoleUI {
         }
     }
 
+//    public String signIn(String... params) throws ResponseException {
+//        if (params.length >= 1) {
+//            state = State.SIGNEDIN;
+//            visitorName = String.join("-", params);
+//            ws = new WebSocketFacade(serverUrl, notificationHandler);
+//            ws.enterPetShop(visitorName);
+//            return String.format("You signed in as %s.", visitorName);
+//        }
+//        throw new ResponseException(400, "Expected: <yourname>");
+//    }
+
     private static void PreLoginHelp() {
         String blue = SET_TEXT_COLOR_BLUE;
         String grey = SET_TEXT_COLOR_LIGHT_GREY;
