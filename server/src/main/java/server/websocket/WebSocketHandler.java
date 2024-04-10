@@ -17,6 +17,7 @@ import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -167,6 +168,32 @@ public class WebSocketHandler {
         }
     }
 
+    public void handleLeave(Session session, String message) {
+        Leave command = new Gson().fromJson(message, Leave.class);
+        GameData gameData = new DBGameDAO().getGame(command.getGameID());
+        String playerName = command.getVisitorName();
+
+        if (Objects.equals(gameData.whiteUsername(), playerName)) {
+            new DBGameDAO().updateGame(new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game()));
+        } else if (Objects.equals(gameData.blackUsername(), playerName)) {
+            new DBGameDAO().updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game()));
+        }
+
+        var messageToSend = String.format(playerName + " has left the game.");
+        var notification = new NotificationMessage(messageToSend);
+
+        try {
+            session.getRemote().sendString(notification.toString());
+            connections.broadcast(playerName, notification);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleResign(Session session, String message) {
+        Resign command = new Gson().fromJson(message, Resign.class);
+    }
+
     private String convertedPosition(ChessPosition position) {
         char file = 'z';
         switch (position.getColumn()) {
@@ -182,13 +209,5 @@ public class WebSocketHandler {
 
         int rank = 8 - position.getRow();
         return "" + file + rank;
-    }
-
-    public void handleLeave(Session session, String message) {
-        Leave command = new Gson().fromJson(message, Leave.class);
-    }
-
-    public void handleResign(Session session, String message) {
-        Resign command = new Gson().fromJson(message, Resign.class);
     }
 }
