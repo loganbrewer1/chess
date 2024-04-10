@@ -1,6 +1,12 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import dataAccess.DBGameDAO;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import spark.Spark;
@@ -85,6 +91,97 @@ public class WebSocketHandler {
 
     public void handleMakeMove(Session session, String message) {
         MakeMove command = new Gson().fromJson(message, MakeMove.class);
+        if (command == null) {
+            try {
+                session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, command not valid.").getErrorMessage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            GameData gameData = new DBGameDAO().getGame(command.getGameID());
+            ChessMove move = command.getMove();
+            ChessGame.TeamColor turnColor = gameData.game().getTeamTurn();
+            String playerName = command.getVisitorName();
+            String opponentName = gameData.blackUsername();
+
+            if (turnColor == ChessGame.TeamColor.BLACK) {
+                opponentName = gameData.whiteUsername();
+            }
+
+            //Attempt make move, and throw error if invalid move
+            try {
+                gameData.game().makeMove(move);
+                //Load game message
+                try {
+                    session.getRemote().sendString(new LoadGameMessage("LOAD GAME").toString());
+                    connections.broadcast(playerName, new LoadGameMessage("LOAD GAME"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try {
+                    var messageToSend = playerName + " made a the move " + convertedPosition(move.getStartPosition()) + " to " + convertedPosition(move.getEndPosition());
+                    var notification = new NotificationMessage(messageToSend);
+                    session.getRemote().sendString(notification.toString());
+                    connections.broadcast(playerName, notification);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } catch (InvalidMoveException e) {
+                try {
+                    session.getRemote().sendString(new ErrorMessage("WebSocket response: Error, not a valid move").getErrorMessage());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            //Checks for checkmate, stalemate, and check. Sends appropriate messages.
+            if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
+                try {
+                    var messageToSend = String.format(opponentName + " is in checkmate.");
+                    var notification = new NotificationMessage(messageToSend);
+                    session.getRemote().sendString(notification.toString());
+                    connections.broadcast(playerName, notification);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
+                try {
+                    var messageToSend = "Stalemate. Game is over";
+                    var notification = new NotificationMessage(messageToSend);
+                    session.getRemote().sendString(notification.toString());
+                    connections.broadcast(playerName, notification);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
+                try {
+                    var messageToSend = String.format(opponentName + " is in check.");
+                    var notification = new NotificationMessage(messageToSend);
+                    session.getRemote().sendString(notification.toString());
+                    connections.broadcast(playerName, notification);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private String convertedPosition(ChessPosition position) {
+        char file = 'z';
+        switch (position.getColumn()) {
+            case 0 -> file = 'a';
+            case 1 -> file = 'b';
+            case 2 -> file = 'c';
+            case 3 -> file = 'd';
+            case 4 -> file = 'e';
+            case 5 -> file = 'f';
+            case 6 -> file = 'g';
+            case 7 -> file = 'h';
+        }
+
+        int rank = 8 - position.getRow();
+        return "" + file + rank;
     }
 
     public void handleLeave(Session session, String message) {
