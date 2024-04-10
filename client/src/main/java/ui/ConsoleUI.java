@@ -1,6 +1,9 @@
 package ui;
 
+import com.google.gson.Gson;
 import model.GameData;
+import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.Resign;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -101,7 +104,7 @@ public class ConsoleUI {
                     try {
                         if (args.length == 2 || args.length == 3) {
                             JoinGame(args, authToken);
-                            PostJoinGame(args, authToken);
+                            PostJoinGame(args, authToken, username);
                         } else {
                             System.out.println("Too many or too few fields were given. Try again.");
                         }
@@ -138,7 +141,7 @@ public class ConsoleUI {
         }
     }
 
-    private static void PostJoinGame(String[] args, String authToken) {
+    private static void PostJoinGame(String[] args, String authToken, String username) {
         try {
             GameData gameData = GetGame(authToken, args[1]);
             PrintRespectiveBoard(args, gameData);
@@ -153,7 +156,7 @@ public class ConsoleUI {
                     case "redraw" -> PrintRespectiveBoard(args, GetGame(authToken, args[1]));
                     case "leave" -> stillPlaying = false;
                     case "move" -> System.out.println("Input your move");
-                    case "resign" -> System.out.println("You have resigned");
+                    case "resign" -> ResignCommand(authToken, gameData.gameID(), username);
                     case "highlight" -> System.out.println("Here are your highlighted moves");
                     case "help" -> PostJoinHelp();
                 }
@@ -178,16 +181,15 @@ public class ConsoleUI {
         }
     }
 
-//    public String signIn(String... params) throws ResponseException {
-//        if (params.length >= 1) {
-//            state = State.SIGNEDIN;
-//            visitorName = String.join("-", params);
-//            ws = new WebSocketFacade(serverUrl, notificationHandler);
-//            ws.enterPetShop(visitorName);
-//            return String.format("You signed in as %s.", visitorName);
-//        }
-//        throw new ResponseException(400, "Expected: <yourname>");
-//    }
+    public void ResignCommand(String authToken, Integer gameID, String username) {
+        try {
+            String resignJson = new Gson().toJson(new Resign(authToken, gameID, username));
+            new WSClient().send(resignJson);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("You resigned (client)");
+    }
 
     private static void PreLoginHelp() {
         String blue = SET_TEXT_COLOR_BLUE;
