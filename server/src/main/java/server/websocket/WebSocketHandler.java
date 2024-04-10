@@ -13,15 +13,16 @@ import spark.Spark;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
+    private final ArrayList<Integer> completedGames = new ArrayList<>();
 
     public static void main(String[] args) {
         Spark.port(8080);
@@ -109,6 +110,17 @@ public class WebSocketHandler {
                 opponentName = gameData.whiteUsername();
             }
 
+            //Check if match has been completed already
+            for (Integer game : completedGames) {
+                if (game == command.getGameID()) {
+                    try {
+                        session.getRemote().sendString(new ErrorMessage("WebSocket response: Match is completed.").getErrorMessage());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
             //Attempt make move, and throw error if invalid move
             try {
                 gameData.game().makeMove(move);
@@ -139,6 +151,7 @@ public class WebSocketHandler {
             //Checks for checkmate, stalemate, and check. Sends appropriate messages.
             if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
                 try {
+                    completedGames.add(command.getGameID());
                     var messageToSend = String.format(opponentName + " is in checkmate.");
                     var notification = new NotificationMessage(messageToSend);
                     session.getRemote().sendString(notification.toString());
@@ -148,7 +161,8 @@ public class WebSocketHandler {
                 }
             } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
                 try {
-                    var messageToSend = "Stalemate. Game is over";
+                    completedGames.add(command.getGameID());
+                    var messageToSend = "Stalemate. Game is over.";
                     var notification = new NotificationMessage(messageToSend);
                     session.getRemote().sendString(notification.toString());
                     connections.broadcast(playerName, notification);
@@ -192,6 +206,18 @@ public class WebSocketHandler {
 
     public void handleResign(Session session, String message) {
         Resign command = new Gson().fromJson(message, Resign.class);
+        String playerName = command.getVisitorName();
+
+        completedGames.add(command.getGameID());
+
+        var messageToSend = String.format(playerName + " has resigned.");
+        var notification = new NotificationMessage(messageToSend);
+        try {
+            session.getRemote().sendString(notification.toString());
+            connections.broadcast(playerName, notification);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String convertedPosition(ChessPosition position) {
