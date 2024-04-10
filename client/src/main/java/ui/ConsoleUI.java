@@ -1,8 +1,11 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
+import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.Leave;
 import webSocketMessages.userCommands.Resign;
 
 import java.util.Objects;
@@ -102,8 +105,18 @@ public class ConsoleUI {
                 }
                 case "join", "observe" -> {
                     try {
-                        if (args.length == 2 || args.length == 3) {
+                        if (args.length == 2) {
                             JoinGame(args, authToken);
+                            SendJoinObserver(authToken, Integer.valueOf(args[1]), username);
+                            PostJoinGame(args, authToken, username);
+                        } else if (args.length == 3) {
+                            JoinGame(args, authToken);
+                            if (args[2].equalsIgnoreCase("black")) {
+                                SendJoinPlayer(authToken, Integer.valueOf(args[1]), ChessGame.TeamColor.BLACK ,username);
+                            } else if (args[2].equalsIgnoreCase("white")) {
+                                SendJoinPlayer(authToken, Integer.valueOf(args[1]), ChessGame.TeamColor.WHITE ,username);
+                            }
+
                             PostJoinGame(args, authToken, username);
                         } else {
                             System.out.println("Too many or too few fields were given. Try again.");
@@ -144,8 +157,10 @@ public class ConsoleUI {
     private static void PostJoinGame(String[] args, String authToken, String username) {
         try {
             GameData gameData = GetGame(authToken, args[1]);
+
             PrintRespectiveBoard(args, gameData);
             System.out.println("You successfully joined the match. Type help for a list of commands.");
+
             boolean stillPlaying = true;
             while (stillPlaying) {
                 System.out.print("\n>>> ");
@@ -154,9 +169,12 @@ public class ConsoleUI {
                 var answerArray = line.split(" ");
                 switch (answerArray[0]) {
                     case "redraw" -> PrintRespectiveBoard(args, GetGame(authToken, args[1]));
-                    case "leave" -> stillPlaying = false;
+                    case "leave" -> {
+                        stillPlaying = false;
+                        SendLeaveCommand(authToken, gameData.gameID(), username);
+                    }
                     case "move" -> System.out.println("Input your move");
-                    case "resign" -> ResignCommand(authToken, gameData.gameID(), username);
+                    case "resign" -> SendResignCommand(authToken, gameData.gameID(), username);
                     case "highlight" -> System.out.println("Here are your highlighted moves");
                     case "help" -> PostJoinHelp();
                 }
@@ -181,7 +199,27 @@ public class ConsoleUI {
         }
     }
 
-    public void ResignCommand(String authToken, Integer gameID, String username) {
+    public static void SendJoinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor, String username) {
+        try {
+            String joinPlayerJson = new Gson().toJson(new JoinPlayer(authToken, gameID, playerColor, username));
+            new WSClient().send(joinPlayerJson);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("You joined as a player (client)");
+    }
+
+    public static void SendJoinObserver(String authToken, Integer gameID, String username) {
+        try {
+            String joinObserverJson = new Gson().toJson(new JoinObserver(authToken, gameID, username));
+            new WSClient().send(joinObserverJson);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("You joined as an observer (client)");
+    }
+
+    public static void SendResignCommand(String authToken, Integer gameID, String username) {
         try {
             String resignJson = new Gson().toJson(new Resign(authToken, gameID, username));
             new WSClient().send(resignJson);
@@ -189,6 +227,16 @@ public class ConsoleUI {
             throw new RuntimeException(e);
         }
         System.out.println("You resigned (client)");
+    }
+
+    public static void SendLeaveCommand(String authToken, int gameID, String username) {
+        try {
+            String leaveJson = new Gson().toJson(new Leave(authToken, gameID, username));
+            new WSClient().send(leaveJson);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("You left (client)");
     }
 
     private static void PreLoginHelp() {
