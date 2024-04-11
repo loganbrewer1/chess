@@ -1,12 +1,12 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.Leave;
-import webSocketMessages.userCommands.Resign;
+import webSocketMessages.userCommands.*;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -173,7 +173,10 @@ public class ConsoleUI {
                         stillPlaying = false;
                         SendLeaveCommand(authToken, gameData.gameID(), username);
                     }
-                    case "move" -> System.out.println("Input your move");
+                    case "move" -> {
+                        ChessMove clientMove = ParseChessMove(answerArray);
+                        SendMakeMove(authToken, gameData.gameID(), clientMove, username);
+                    }
                     case "resign" -> SendResignCommand(authToken, gameData.gameID(), username);
                     case "highlight" -> System.out.println("Here are your highlighted moves");
                     case "help" -> PostJoinHelp();
@@ -182,6 +185,10 @@ public class ConsoleUI {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static ChessMove ParseChessMove(String[] answerArray) {
+        return new ChessMove(ConvertedPosition(answerArray[1]), ConvertedPosition(answerArray[2]), ConvertPromotion(answerArray[3]));
     }
 
     private static void PrintRespectiveBoard(String[] args, GameData gameData) {
@@ -197,6 +204,16 @@ public class ConsoleUI {
         } else {
             PrintBoardWhite(gameData.game().getBoard());
         }
+    }
+
+    public static void SendMakeMove(String authToken, int gameID, ChessMove move, String username) {
+        try {
+            String makeMoveJson = new Gson().toJson(new MakeMove(authToken, gameID, move, username));
+            new WSClient().send(makeMoveJson);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("You sent a move (client)");
     }
 
     public static void SendJoinPlayer(String authToken, Integer gameID, ChessGame.TeamColor playerColor, String username) {
@@ -239,6 +256,38 @@ public class ConsoleUI {
         System.out.println("You left (client)");
     }
 
+    private static ChessPosition ConvertedPosition(String position) {
+        char column = position.charAt(0);
+        int row = Character.getNumericValue(position.charAt(1));
+        int file = 10;
+
+        switch (column) {
+            case 'a' -> file = 0;
+            case 'b' -> file = 1;
+            case 'c' -> file = 2;
+            case 'd' -> file = 3;
+            case 'e' -> file = 4;
+            case 'f' -> file = 5;
+            case 'g' -> file = 6;
+            case 'h' -> file = 7;
+        }
+
+        return new ChessPosition(row, file);
+    }
+
+    private static ChessPiece.PieceType ConvertPromotion(String pieceInput) {
+        ChessPiece.PieceType pieceType = null;
+
+        switch (pieceInput) {
+            case "Q" -> pieceType = ChessPiece.PieceType.QUEEN;
+            case "N" -> pieceType = ChessPiece.PieceType.KNIGHT;
+            case "B" -> pieceType = ChessPiece.PieceType.BISHOP;
+            case "R" -> pieceType = ChessPiece.PieceType.ROOK;
+        }
+
+        return pieceType;
+    }
+
     private static void PreLoginHelp() {
         String blue = SET_TEXT_COLOR_BLUE;
         String grey = SET_TEXT_COLOR_LIGHT_GREY;
@@ -267,7 +316,7 @@ public class ConsoleUI {
         System.out.print(ERASE_SCREEN);
         System.out.println(blue + "redraw " + grey + " - Chess Board");
         System.out.println(blue + "leave" + grey + " - the chess match");
-        System.out.println(blue + "move <START POSITION> <END POSITION>" + grey + " - make your next move (eg. move e2 e4)");
+        System.out.println(blue + "move <START POSITION> <END POSITION> <PROMOTION PIECE>" + grey + " - make your next move (eg. move e7 e8 Q)");
         System.out.println(blue + "resign" + grey + " - the chess match");
         System.out.println(blue + "highlight <PIECE POSITION>" + grey + " - legal moves (eg. highlight e2)");
         System.out.print(blue + "help" + grey + " - for a list of helpful commands" + SET_TEXT_COLOR_WHITE);
