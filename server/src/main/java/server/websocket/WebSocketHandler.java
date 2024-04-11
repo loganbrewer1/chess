@@ -59,7 +59,7 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(messageToSend);
 
             try {
-                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").toString());
+                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").getGame());
                 connections.broadcast(playerName, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -84,7 +84,7 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(messageToSend);
 
             try {
-                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").toString());
+                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").getGame());
                 connections.broadcast(playerName, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -126,9 +126,10 @@ public class WebSocketHandler {
             //Attempt make move, and throw error if invalid move
             try {
                 gameData.game().makeMove(move);
+                new DBGameDAO().updateGame(gameData);
                 //Load game message
                 try {
-                    session.getRemote().sendString(new LoadGameMessage("LOAD GAME").toString());
+                    session.getRemote().sendString(new LoadGameMessage("LOAD GAME").getGame());
                     connections.broadcast(playerName, new LoadGameMessage("LOAD GAME"));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -137,7 +138,7 @@ public class WebSocketHandler {
                 try {
                     var messageToSend = playerName + " made a the move " + convertedPosition(move.getStartPosition()) + " to " + convertedPosition(move.getEndPosition());
                     var notification = new NotificationMessage(messageToSend);
-                    session.getRemote().sendString(notification.toString());
+                    session.getRemote().sendString(notification.getMessage());
                     connections.broadcast(playerName, notification);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -156,7 +157,7 @@ public class WebSocketHandler {
                     completedGames.add(command.getGameID());
                     var messageToSend = String.format(opponentName + " is in checkmate.");
                     var notification = new NotificationMessage(messageToSend);
-                    session.getRemote().sendString(notification.toString());
+                    session.getRemote().sendString(notification.getMessage());
                     connections.broadcast(playerName, notification);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -166,7 +167,7 @@ public class WebSocketHandler {
                     completedGames.add(command.getGameID());
                     var messageToSend = "Stalemate. Game is over.";
                     var notification = new NotificationMessage(messageToSend);
-                    session.getRemote().sendString(notification.toString());
+                    session.getRemote().sendString(notification.getMessage());
                     connections.broadcast(playerName, notification);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -175,7 +176,7 @@ public class WebSocketHandler {
                 try {
                     var messageToSend = String.format(opponentName + " is in check.");
                     var notification = new NotificationMessage(messageToSend);
-                    session.getRemote().sendString(notification.toString());
+                    session.getRemote().sendString(notification.getMessage());
                     connections.broadcast(playerName, notification);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -200,7 +201,7 @@ public class WebSocketHandler {
         var notification = new NotificationMessage(messageToSend);
 
         try {
-            session.getRemote().sendString(notification.toString());
+            session.getRemote().sendString(notification.getMessage());
             connections.broadcast(playerName, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -217,7 +218,7 @@ public class WebSocketHandler {
         var messageToSend = String.format(playerName + " has resigned.");
         var notification = new NotificationMessage(messageToSend);
         try {
-            session.getRemote().sendString(notification.toString());
+            session.getRemote().sendString(notification.getMessage());
             connections.broadcast(playerName, notification);
         } catch (IOException e) {
             throw new RuntimeException(e);

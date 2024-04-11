@@ -46,17 +46,17 @@ public class WSClient extends Endpoint {
 
     private void HandleNotification(Session session, String message) {
         NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
-        System.out.println(notification.getMessage());
+        System.out.println(notification.toString());
     }
 
     private void HandleLoadGame(Session session, String message) {
         LoadGameMessage notification = new Gson().fromJson(message, LoadGameMessage.class);
-        System.out.println(notification.getGame());
+        System.out.println(notification.toString());
     }
 
     private void HandleErrorMessage(Session session, String message) {
         ErrorMessage notification = new Gson().fromJson(message, ErrorMessage.class);
-        System.out.println(notification.getErrorMessage());
+        System.out.println(notification.toString());
     }
 
     public void send(String msg) throws Exception {

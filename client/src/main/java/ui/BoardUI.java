@@ -11,7 +11,7 @@ public class BoardUI {
     public static void PrintBoardBlack(ChessBoard board) {
         System.out.print(SET_BG_COLOR_BLACK);
         String[] letters = new String[]{"","H","G","F","E","D","C","B","A",""};
-        String[] numbers = new String[]{"8","7","6","5","4","3","2","1"};
+        String[] numbers = new String[]{"1","2","3","4","5","6","7","8"};
         Integer counter = 0;
         for (String letter : letters) {
             counter++;
@@ -22,7 +22,7 @@ public class BoardUI {
             }
         }
         System.out.println();
-        for (int i = 7; i >= 0; i--) {
+        for (int i = 0; i <= 7; i++) {
             System.out.print(numbers[i] + " ");
             for (int j = 7; j >= 0; j--) {
                 if ((i + j) % 2 == 0 ) {
@@ -45,7 +45,7 @@ public class BoardUI {
                 System.out.print(letter + "   ");
             }
         }
-        System.out.print(RESET_BG_COLOR);
+        System.out.println(RESET_BG_COLOR);
     }
 
     public static void PrintBoardWhite(ChessBoard board) {
@@ -62,7 +62,7 @@ public class BoardUI {
             }
         }
         System.out.println();
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 7; i >= 0; i--) {
             System.out.print(numbers[i] + " ");
             for (int j = 0; j <= 7; j++) {
                 if ((i + j) % 2 == 0 ) {

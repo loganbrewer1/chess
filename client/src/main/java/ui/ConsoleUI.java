@@ -163,7 +163,7 @@ public class ConsoleUI {
 
             boolean stillPlaying = true;
             while (stillPlaying) {
-                System.out.print("\n>>> ");
+                System.out.print("\n");
                 Scanner scanner = new Scanner(System.in);
                 String line = scanner.nextLine();
                 var answerArray = line.split(" ");
@@ -200,6 +200,9 @@ public class ConsoleUI {
         if (args.length == 3) {
             if (Objects.equals(args[2].toLowerCase(), "white")) {
                 PrintBoardWhite(gameData.game().getBoard());
+                gameData.game().getBoard().printBoard();
+                System.out.println(new Gson().toJson(gameData.game().getBoard()));
+                System.out.println(gameData.game().getBoard().getPiece(new ChessPosition(1,5)).getPieceType().toString());
             } else if (Objects.equals(args[2].toLowerCase(), "black")) {
                 PrintBoardBlack(gameData.game().getBoard());
             } else {
@@ -266,14 +269,14 @@ public class ConsoleUI {
         int file = 10;
 
         switch (column) {
-            case 'a' -> file = 0;
-            case 'b' -> file = 1;
-            case 'c' -> file = 2;
-            case 'd' -> file = 3;
-            case 'e' -> file = 4;
-            case 'f' -> file = 5;
-            case 'g' -> file = 6;
-            case 'h' -> file = 7;
+            case 'a' -> file = 1;
+            case 'b' -> file = 2;
+            case 'c' -> file = 3;
+            case 'd' -> file = 4;
+            case 'e' -> file = 5;
+            case 'f' -> file = 6;
+            case 'g' -> file = 7;
+            case 'h' -> file = 8;
         }
 
         return new ChessPosition(row, file);
