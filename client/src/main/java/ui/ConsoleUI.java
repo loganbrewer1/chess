@@ -188,15 +188,19 @@ public class ConsoleUI {
     }
 
     private static ChessMove ParseChessMove(String[] answerArray) {
-        return new ChessMove(ConvertedPosition(answerArray[1]), ConvertedPosition(answerArray[2]), ConvertPromotion(answerArray[3]));
+        if (answerArray.length == 4) {
+            return new ChessMove(ConvertedPosition(answerArray[1]), ConvertedPosition(answerArray[2]), ConvertPromotion(answerArray[3]));
+        } else {
+            return new ChessMove(ConvertedPosition(answerArray[1]), ConvertedPosition(answerArray[2]), null);
+        }
     }
 
     private static void PrintRespectiveBoard(String[] args, GameData gameData) {
         System.out.println(ERASE_SCREEN);
         if (args.length == 3) {
-            if (Objects.equals(args[2], "WHITE")) {
+            if (Objects.equals(args[2].toLowerCase(), "white")) {
                 PrintBoardWhite(gameData.game().getBoard());
-            } else if (Objects.equals(args[2], "BLACK")) {
+            } else if (Objects.equals(args[2].toLowerCase(), "black")) {
                 PrintBoardBlack(gameData.game().getBoard());
             } else {
                 System.out.println(args[2] + " is not a Chess player color. What is wrong with you??");
