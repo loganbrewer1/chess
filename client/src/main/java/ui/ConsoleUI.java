@@ -17,6 +17,7 @@ import static ui.EscapeSequences.*;
 import static ui.ServerFacade.*;
 
 public class ConsoleUI {
+    public static boolean playingBlack = false;
     public static void PreLogin() {
         boolean stillPlaying = true;
         while (stillPlaying) {
@@ -112,11 +113,11 @@ public class ConsoleUI {
                         } else if (args.length == 3) {
                             JoinGame(args, authToken);
                             if (args[2].equalsIgnoreCase("black")) {
+                                playingBlack = true;
                                 SendJoinPlayer(authToken, Integer.valueOf(args[1]), ChessGame.TeamColor.BLACK ,username);
                             } else if (args[2].equalsIgnoreCase("white")) {
                                 SendJoinPlayer(authToken, Integer.valueOf(args[1]), ChessGame.TeamColor.WHITE ,username);
                             }
-
                             PostJoinGame(args, authToken, username);
                         } else {
                             System.out.println("Too many or too few fields were given. Try again.");
@@ -157,8 +158,7 @@ public class ConsoleUI {
     private static void PostJoinGame(String[] args, String authToken, String username) {
         try {
             GameData gameData = GetGame(authToken, args[1]);
-
-            PrintRespectiveBoard(args, gameData);
+            Thread.sleep(100);
             System.out.println("You successfully joined the match. Type help for a list of commands.");
 
             boolean stillPlaying = true;
@@ -171,6 +171,7 @@ public class ConsoleUI {
                     case "redraw" -> PrintRespectiveBoard(args, GetGame(authToken, args[1]));
                     case "leave" -> {
                         stillPlaying = false;
+                        playingBlack = false;
                         SendLeaveCommand(authToken, gameData.gameID(), username);
                     }
                     case "move" -> {
@@ -195,16 +196,14 @@ public class ConsoleUI {
         }
     }
 
-    private static void PrintRespectiveBoard(String[] args, GameData gameData) {
+    public static void PrintRespectiveBoard(String[] args, GameData gameData) {
         System.out.println(ERASE_SCREEN);
         if (args.length == 3) {
             if (Objects.equals(args[2].toLowerCase(), "white")) {
                 PrintBoardWhite(gameData.game().getBoard());
-                gameData.game().getBoard().printBoard();
-                System.out.println(new Gson().toJson(gameData.game().getBoard()));
-                System.out.println(gameData.game().getBoard().getPiece(new ChessPosition(1,5)).getPieceType().toString());
             } else if (Objects.equals(args[2].toLowerCase(), "black")) {
                 PrintBoardBlack(gameData.game().getBoard());
+                playingBlack = true;
             } else {
                 System.out.println(args[2] + " is not a Chess player color. What is wrong with you??");
             }

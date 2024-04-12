@@ -57,9 +57,10 @@ public class WebSocketHandler {
 
             var messageToSend = String.format(playerName + " joined the game as the " + command.getPlayerColor() + " player.");
             var notification = new NotificationMessage(messageToSend);
+            GameData gameData = new DBGameDAO().getGame(command.getGameID());
 
             try {
-                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").getGame());
+                session.getRemote().sendString(new Gson().toJson(new LoadGameMessage(gameData.game())));
                 connections.broadcast(playerName, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -82,9 +83,10 @@ public class WebSocketHandler {
 
             var messageToSend = String.format(playerName + " joined the game as an observer.");
             var notification = new NotificationMessage(messageToSend);
+            GameData gameData = new DBGameDAO().getGame(command.getGameID());
 
             try {
-                session.getRemote().sendString(new LoadGameMessage("LOAD GAME").getGame());
+                session.getRemote().sendString(new Gson().toJson(new LoadGameMessage(gameData.game())));
                 connections.broadcast(playerName, notification);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -105,11 +107,14 @@ public class WebSocketHandler {
             GameData gameData = new DBGameDAO().getGame(command.getGameID());
             ChessMove move = command.getMove();
             ChessGame.TeamColor turnColor = gameData.game().getTeamTurn();
+            ChessGame.TeamColor opponentColor = ChessGame.TeamColor.BLACK;
             String playerName = command.getVisitorName();
             String opponentName = gameData.blackUsername();
 
             if (turnColor == ChessGame.TeamColor.BLACK) {
                 opponentName = gameData.whiteUsername();
+                opponentColor = ChessGame.TeamColor.WHITE;
+
             }
 
             //Check if match has been completed already
@@ -129,14 +134,14 @@ public class WebSocketHandler {
                 new DBGameDAO().updateGame(gameData);
                 //Load game message
                 try {
-                    session.getRemote().sendString(new LoadGameMessage("LOAD GAME").getGame());
-                    connections.broadcast(playerName, new LoadGameMessage("LOAD GAME"));
+                    session.getRemote().sendString(new Gson().toJson(new LoadGameMessage(gameData.game())));
+                    connections.broadcast(playerName, new LoadGameMessage(gameData.game()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
                 try {
-                    var messageToSend = playerName + " made a the move " + convertedPosition(move.getStartPosition()) + " to " + convertedPosition(move.getEndPosition());
+                    var messageToSend = playerName + " made the move " + convertedPosition(move.getStartPosition()) + " to " + convertedPosition(move.getEndPosition());
                     var notification = new NotificationMessage(messageToSend);
                     session.getRemote().sendString(notification.getMessage());
                     connections.broadcast(playerName, notification);
@@ -152,7 +157,7 @@ public class WebSocketHandler {
             }
 
             //Checks for checkmate, stalemate, and check. Sends appropriate messages.
-            if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
+            if (gameData.game().isInCheckmate(opponentColor)) {
                 try {
                     completedGames.add(command.getGameID());
                     var messageToSend = String.format(opponentName + " is in checkmate.");
@@ -162,7 +167,7 @@ public class WebSocketHandler {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
+            } else if (gameData.game().isInStalemate(opponentColor)) {
                 try {
                     completedGames.add(command.getGameID());
                     var messageToSend = "Stalemate. Game is over.";
@@ -172,7 +177,7 @@ public class WebSocketHandler {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
+            } else if (gameData.game().isInCheck(opponentColor)) {
                 try {
                     var messageToSend = String.format(opponentName + " is in check.");
                     var notification = new NotificationMessage(messageToSend);
@@ -228,17 +233,17 @@ public class WebSocketHandler {
     private String convertedPosition(ChessPosition position) {
         char file = 'z';
         switch (position.getColumn()) {
-            case 0 -> file = 'a';
-            case 1 -> file = 'b';
-            case 2 -> file = 'c';
-            case 3 -> file = 'd';
-            case 4 -> file = 'e';
-            case 5 -> file = 'f';
-            case 6 -> file = 'g';
-            case 7 -> file = 'h';
+            case 1 -> file = 'a';
+            case 2 -> file = 'b';
+            case 3 -> file = 'c';
+            case 4 -> file = 'd';
+            case 5 -> file = 'e';
+            case 6 -> file = 'f';
+            case 7 -> file = 'g';
+            case 8 -> file = 'h';
         }
 
-        int rank = 8 - position.getRow();
+        int rank = position.getRow();
         return "" + file + rank;
     }
 }

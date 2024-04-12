@@ -51,7 +51,7 @@ public class BoardUI {
     public static void PrintBoardWhite(ChessBoard board) {
         System.out.print(SET_BG_COLOR_BLACK);
         String[] letters = new String[]{"","A","B","C","D","E","F","G","H",""};
-        String[] numbers = new String[]{"8","7","6","5","4","3","2","1"};
+        String[] numbers = new String[]{"1","2","3","4","5","6","7","8"};
         Integer counter = 0;
         for (String letter : letters) {
             counter++;

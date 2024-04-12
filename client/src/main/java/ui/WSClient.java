@@ -11,6 +11,11 @@ import javax.websocket.*;
 import java.net.URI;
 import java.util.Scanner;
 
+import static ui.BoardUI.PrintBoardBlack;
+import static ui.BoardUI.PrintBoardWhite;
+import static ui.ConsoleUI.PrintRespectiveBoard;
+import static ui.ConsoleUI.playingBlack;
+
 public class WSClient extends Endpoint {
 
     public static void main(String[] args) throws Exception {
@@ -46,12 +51,16 @@ public class WSClient extends Endpoint {
 
     private void HandleNotification(Session session, String message) {
         NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
-        System.out.println(notification.toString());
+        System.out.println("Notification received: " + notification.getMessage());
     }
 
     private void HandleLoadGame(Session session, String message) {
         LoadGameMessage notification = new Gson().fromJson(message, LoadGameMessage.class);
-        System.out.println(notification.toString());
+        if (playingBlack) {
+            PrintBoardBlack(notification.getGame().getBoard());
+        } else {
+            PrintBoardWhite(notification.getGame().getBoard());
+        }
     }
 
     private void HandleErrorMessage(Session session, String message) {

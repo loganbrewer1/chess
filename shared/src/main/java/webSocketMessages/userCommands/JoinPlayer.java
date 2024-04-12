@@ -11,7 +11,7 @@ public class JoinPlayer extends UserGameCommand {
         this.gameID = gameID;
         this.playerColor = playerColor;
         this.visitorName = visitorName;
-        this.commandType = CommandType.JOIN_OBSERVER;
+        this.commandType = CommandType.JOIN_PLAYER;
     }
 
     public int getGameID() {
