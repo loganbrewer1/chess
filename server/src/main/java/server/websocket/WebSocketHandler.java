@@ -122,6 +122,7 @@ public class WebSocketHandler {
                 if (game == command.getGameID()) {
                     try {
                         session.getRemote().sendString(new ErrorMessage("WebSocket response: Match is completed.").getErrorMessage());
+                        return;
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

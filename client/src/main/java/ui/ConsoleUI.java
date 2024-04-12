@@ -179,13 +179,17 @@ public class ConsoleUI {
                         SendMakeMove(authToken, gameData.gameID(), clientMove, username);
                     }
                     case "resign" -> SendResignCommand(authToken, gameData.gameID(), username);
-                    case "highlight" -> System.out.println("Here are your highlighted moves");
+                    case "highlight" -> HighlightLegalMoves(args, GetGame(authToken, args[1]));
                     case "help" -> PostJoinHelp();
                 }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void HighlightLegalMoves(String[] args, GameData gameData) {
+
     }
 
     private static ChessMove ParseChessMove(String[] answerArray) {
