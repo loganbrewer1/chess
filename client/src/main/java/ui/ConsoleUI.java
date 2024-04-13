@@ -193,7 +193,11 @@ public class ConsoleUI {
     private static void HighlightLegalMoves(String[] args, GameData gameData) {
         ChessPosition pieceOfInterest = ConvertedPosition(args[1]);
         Collection<ChessMove> legalMoves = gameData.game().validMoves(pieceOfInterest);
-        HighlightMoves(gameData.game().getBoard(), legalMoves);
+        if (playingBlack) {
+            HighlightMovesBlack(gameData.game().getBoard(), legalMoves);
+        } else {
+            HighlightMovesWhite(gameData.game().getBoard(), legalMoves);
+        }
     }
 
     private static ChessMove ParseChessMove(String[] answerArray) {
