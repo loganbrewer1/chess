@@ -8,11 +8,12 @@ import com.google.gson.Gson;
 import model.GameData;
 import webSocketMessages.userCommands.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static ui.BoardUI.PrintBoardBlack;
-import static ui.BoardUI.PrintBoardWhite;
+import static ui.BoardUI.*;
 import static ui.EscapeSequences.*;
 import static ui.ServerFacade.*;
 
@@ -108,6 +109,7 @@ public class ConsoleUI {
                     try {
                         if (args.length == 2) {
                             JoinGame(args, authToken);
+                            System.out.println(GetGame(authToken, args[1]).whiteUsername());
                             SendJoinObserver(authToken, Integer.valueOf(args[1]), username);
                             PostJoinGame(args, authToken, username);
                         } else if (args.length == 3) {
@@ -179,7 +181,7 @@ public class ConsoleUI {
                         SendMakeMove(authToken, gameData.gameID(), clientMove, username);
                     }
                     case "resign" -> SendResignCommand(authToken, gameData.gameID(), username);
-                    case "highlight" -> HighlightLegalMoves(args, GetGame(authToken, args[1]));
+                    case "highlight" -> HighlightLegalMoves(answerArray, GetGame(authToken, args[1]));
                     case "help" -> PostJoinHelp();
                 }
             }
@@ -189,7 +191,9 @@ public class ConsoleUI {
     }
 
     private static void HighlightLegalMoves(String[] args, GameData gameData) {
-
+        ChessPosition pieceOfInterest = ConvertedPosition(args[1]);
+        Collection<ChessMove> legalMoves = gameData.game().validMoves(pieceOfInterest);
+        HighlightMoves(gameData.game().getBoard(), legalMoves);
     }
 
     private static ChessMove ParseChessMove(String[] answerArray) {
