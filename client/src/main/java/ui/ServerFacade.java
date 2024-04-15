@@ -138,7 +138,7 @@ public class ServerFacade {
         if (args.length < 3) {
             body = Map.of("gameID", args[1]);
         } else  {
-            body = Map.of("gameID", args[1], "playerColor", args[2]);
+            body = Map.of("gameID", args[1], "playerColor", args[2].toUpperCase());
         }
 
         try (var outputStream = http.getOutputStream()) {
